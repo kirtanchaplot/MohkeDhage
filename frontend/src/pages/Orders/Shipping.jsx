@@ -10,7 +10,7 @@ import ProgressSteps from "../../components/ProgressSteps";
 const Shipping = () => {
   const cart = useSelector((state) => state.cart);
   const { shippingAddress } = cart;
-
+ 
   const [paymentMethod, setPaymentMethod] = useState("PayPal");
   const [address, setAddress] = useState(shippingAddress.address || "");
   const [city, setCity] = useState(shippingAddress.city || "");
