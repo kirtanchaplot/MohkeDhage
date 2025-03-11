@@ -24,25 +24,36 @@ const fileFilter = (req, file, cb) => {
   if (filetypes.includes(extname) && mimetype.startsWith("image/")) {
     cb(null, true);
   } else {
-    cb(new Error("Images only"), false);
+    cb(new Error("Only JPEG, JPG, PNG, or WEBP images are allowed"), false);
   }
 };
 
 const upload = multer({ storage, fileFilter });
 
-router.post("/", upload.single("image"), (req, res) => {
-  if (req.file) {
-    res.status(200).send({
-      message: "Image uploaded successfully",
-      image: req.file.path,
-    });
-  } else {
-    res.status(400).send({ message: "No image file provided" });
-  }
+// ✅ Added Try-Catch for Better Error Handling
+router.post("/", (req, res) => {
+  upload.single("image")(req, res, (err) => {
+    try {
+      if (err) {
+        console.error("Multer Error:", err.message);
+        return res.status(400).json({ message: err.message });
+      }
+      if (!req.file) {
+        return res.status(400).json({ message: "No image file provided" });
+      }
+
+      res.status(200).json({
+        message: "Image uploaded successfully",
+        image: req.file.path,
+      });
+    } catch (error) {
+      console.error("Unexpected Error:", error.message);
+      res.status(500).json({ message: "Server error. Try again later." });
+    }
+  });
 });
 
 export default router;
-
 
 
 // import path from "path";
@@ -51,11 +62,12 @@ export default router;
 
 // const router = express.Router();
 
+// // Ensure 'uploads' folder exists manually before running the server
+
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
 //     cb(null, "uploads/");
 //   },
-
 //   filename: (req, file, cb) => {
 //     const extname = path.extname(file.originalname);
 //     cb(null, `${file.fieldname}-${Date.now()}${extname}`);
@@ -63,13 +75,11 @@ export default router;
 // });
 
 // const fileFilter = (req, file, cb) => {
-//   const filetypes = /jpe?g|png|webp/;
-//   const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
-
-//   const extname = path.extname(file.originalname).toLowerCase();
+//   const filetypes = ["jpeg", "jpg", "png", "webp"];
+//   const extname = path.extname(file.originalname).toLowerCase().replace(".", "");
 //   const mimetype = file.mimetype;
 
-//   if (filetypes.test(extname) && mimetypes.test(mimetype)) {
+//   if (filetypes.includes(extname) && mimetype.startsWith("image/")) {
 //     cb(null, true);
 //   } else {
 //     cb(new Error("Images only"), false);
@@ -77,21 +87,19 @@ export default router;
 // };
 
 // const upload = multer({ storage, fileFilter });
-// const uploadSingleImage = upload.single("image");
 
-// router.post("/", (req, res) => {
-//   uploadSingleImage(req, res, (err) => {
-//     if (err) {
-//       res.status(400).send({ message: err.message });
-//     } else if (req.file) {
-//       res.status(200).send({
-//         message: "Image uploaded successfully",
-//         image: `/${req.file.path}`,
-//       });
-//     } else {
-//       res.status(400).send({ message: "No image file provided" });
-//     }
-//   });
+// router.post("/", upload.single("image"), (req, res) => {
+//   if (req.file) {
+//     res.status(200).send({
+//       message: "Image uploaded successfully",
+//       image: req.file.path,
+//     });
+//   } else {
+//     res.status(400).send({ message: "No image file provided" });
+//   }
 // });
 
 // export default router;
+
+
+

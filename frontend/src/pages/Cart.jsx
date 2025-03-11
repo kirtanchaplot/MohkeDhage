@@ -89,7 +89,7 @@ const Cart = () => {
                   </h2>
 
                   <div className="text-2xl font-bold">
-                    ${" "}
+                  ₹{" "}
                     {cartItems
                       .reduce((acc, item) => acc + item.qty * item.price, 0)
                       .toFixed(2)}

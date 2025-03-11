@@ -26,14 +26,7 @@ const Navigation = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  const toggleSidebar = () => {
-        setShowSidebar(!showSidebar);
-      };
-
-      const closeSidebar = () => {
-            setShowSidebar(false);
-          };
-    
+ 
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
