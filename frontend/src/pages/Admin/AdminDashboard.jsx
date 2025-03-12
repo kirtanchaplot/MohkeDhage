@@ -23,7 +23,7 @@ const AdminDashboard = () => {
         type: "line",
       },
       tooltip: {
-        theme: "dark",
+        theme: "light",
       },
       colors: ["#00E396"],
       dataLabels: {

@@ -90,7 +90,7 @@ const PlaceOrder = () => {
 
         <div className="mt-8">
           <h2 className="text-2xl font-semibold mb-5">Order Summary</h2>
-          <div className="flex justify-between flex-wrap p-8 bg-[#181818]">
+          <div className="flex justify-between flex-wrap p-8 bg-[#252121]">
             <ul className="text-lg">
               <li>
                 <span className="font-semibold mb-4">Items:</span> $
