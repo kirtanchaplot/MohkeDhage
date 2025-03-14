@@ -1,3 +1,7 @@
+import { createRazorpayOrder } from "../controllers/orderController.js";
+
+
+
 import express from "express";
 const router = express.Router();
 
@@ -26,8 +30,19 @@ router.route("/total-sales").get(calculateTotalSales);
 router.route("/total-sales-by-date").get(calcualteTotalSalesByDate);
 router.route("/:id").get(authenticate, findOrderById);
 router.route("/:id/pay").put(authenticate, markOrderAsPaid);
+
+
+  // Add this route to your orderRoutes.js
+  router.route('/create-razorpay-order').post(authenticate, createRazorpayOrder);
+
+
 router
   .route("/:id/deliver")
   .put(authenticate, authorizeAdmin, markOrderAsDelivered);
+
+//   // Add this route to your orderRoutes.js
+// router.route('/create-razorpay-order').post(authenticate, createRazorpayOrder);
+
+  
 
 export default router;

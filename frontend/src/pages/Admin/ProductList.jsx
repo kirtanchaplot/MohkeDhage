@@ -132,7 +132,7 @@ const ProductList = () => {
                 <label htmlFor="name block">Brand</label> <br />
                 <input
                   type="text"
-                  className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#101011] text-white"
+                  className="p-4 mb-3 w-[30rem] border rounded-lg bg-[#09090a] text-white"
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
                 />
