@@ -26,7 +26,7 @@ import Shipping from "./pages/Orders/Shipping.jsx";
 import PlaceOrder from "./pages/Orders/PlaceOrder.jsx";
 import Order from "./pages/Orders/Order.jsx";
 import OrderList from "./pages/Admin/OrderList.jsx";
-import Razorpay from "razorpay";
+// import Razorpay from "razorpay";
 
 
 // here

@@ -80,6 +80,12 @@ const Shop = () => {
     setPriceFilter(e.target.value);
   };
 
+  // CSS classes for product hover animation
+  const productCardStyle = {
+    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    cursor: "pointer",
+  };
+
   return (
     <>
       <div className="container mx-auto">
@@ -169,8 +175,19 @@ const Shop = () => {
                 <Loader />
               ) : (
                 products?.map((p) => (
-                  <div className="p-3" key={p._id}>
-                    <ProductCard p={p} />
+                  <div 
+                    className="p-3 product-card-container" 
+                    key={p._id}
+                    style={{
+                      perspective: "1000px",
+                    }}
+                  >
+                    <div
+                      className="product-card-wrapper transition-all duration-300 hover:scale-110 hover:shadow-lg hover:z-10 rounded-lg overflow-hidden"
+                      style={productCardStyle}
+                    >
+                      <ProductCard p={p} />
+                    </div>
                   </div>
                 ))
               )}
