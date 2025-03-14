@@ -8,9 +8,9 @@ function calcPrices(orderItems) {
     (acc, item) => acc + item.price * item.qty,
     0
   );
-
-  const shippingPrice = itemsPrice > 100 ? 0 : 10;
-  const taxRate = 0.15;
+  const shippingPrice = 50;  //  Fixed shipping price of ₹50
+  // const shippingPrice = itemsPrice > 100 ? 0 : 10;
+  const taxRate = 0.15;   // tax00
   const taxPrice = (itemsPrice * taxRate).toFixed(2);
 
   const totalPrice = (
