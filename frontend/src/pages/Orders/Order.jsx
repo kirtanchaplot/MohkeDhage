@@ -48,7 +48,7 @@ const Order = () => {
 
 
         // key: razorpay.clientId,
-        key:"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        key:"rzp_test_yo2PnQeOMGUAU5",              //////not to add on git
 
 
 
