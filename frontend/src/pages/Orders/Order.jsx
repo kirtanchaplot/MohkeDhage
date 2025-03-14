@@ -48,7 +48,7 @@ const Order = () => {
 
 
         // key: razorpay.clientId,
-        key:"rzp_test_KdaSUfJ0d12LYy",
+        key:"rzp_test_yo2PnQeOMGUAU5",
 
 
 
@@ -231,90 +231,4 @@ const Order = () => {
 export default Order;
 
 
-
-// import { useEffect } from "react";
-// import { useParams } from "react-router-dom";
-// import { useSelector } from "react-redux";
-// import { toast } from "react-toastify";
-// import Messsage from "../../components/Message";
-// import Loader from "../../components/Loader";
-// import {
-//   useDeliverOrderMutation,
-//   useGetOrderDetailsQuery,
-//   usePayOrderMutation,
-//   useGetRazorpayClientIdQuery, // ✅ Fetch Razorpay key
-// } from "../../redux/api/orderApiSlice";
-
-// const Order = () => {
-//   const { id: orderId } = useParams();
-//   const { data: order, refetch, isLoading, error } = useGetOrderDetailsQuery(orderId);
-//   const [payOrder, { isLoading: loadingPay }] = usePayOrderMutation();
-//   const [deliverOrder, { isLoading: loadingDeliver }] = useDeliverOrderMutation();
-//   const { userInfo } = useSelector((state) => state.auth);
-
-//   const { data: razorpay, isLoading: loadingRazorpay, error: errorRazorpay } =
-//     useGetRazorpayClientIdQuery(); // ✅ Fetch Razorpay key
-
-//   useEffect(() => {
-//     if (!errorRazorpay && !loadingRazorpay && razorpay?.clientId) {
-//       console.log("Razorpay Key Loaded:", razorpay.clientId);
-//     }
-//   }, [razorpay, errorRazorpay, loadingRazorpay]);
-
-//   const handleRazorpayPayment = async () => {
-//     const options = {
-//       key: razorpay.clientId, // ✅ Use Razorpay key from backend
-//       amount: order.totalPrice * 100, // Razorpay needs amount in paisa
-//       currency: "INR",
-//       name: "MohkeDhage",
-//       description: `Order #${order._id}`,
-//       image: "/logo.png",
-//       order_id: order.razorpayOrderId, // ✅ This should come from your backend
-//       handler: async (response) => {
-//         const paymentDetails = {
-//           orderId,
-//           paymentId: response.razorpay_payment_id,
-//           signature: response.razorpay_signature,
-//         };
-//         try {
-//           await payOrder(paymentDetails);
-//           refetch();
-//           toast.success("Payment Successful");
-//         } catch (error) {
-//           toast.error(error?.data?.message || error.message);
-//         }
-//       },
-//       theme: { color: "#f50057" },
-//     };
-
-//     const rzp = new window.Razorpay(options);
-//     rzp.open();
-//   };
-
-//   return isLoading ? (
-//     <Loader />
-//   ) : error ? (
-//     <Messsage variant="danger">{error.data.message}</Messsage>
-//   ) : (
-//     <div>
-//       <h2>Order Summary</h2>
-//       <p>Total: ₹{order.totalPrice}</p>
-
-//       {!order.isPaid && (
-//         <button onClick={handleRazorpayPayment} className="bg-blue-500 text-white p-2">
-//           Pay with Razorpay
-//         </button>
-//       )}
-
-//       {loadingDeliver && <Loader />}
-//       {userInfo?.isAdmin && order.isPaid && !order.isDelivered && (
-//         <button onClick={() => deliverOrder(orderId)} className="bg-green-500 text-white p-2">
-//           Mark As Delivered
-//         </button>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default Order;
 
