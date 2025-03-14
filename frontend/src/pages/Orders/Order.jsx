@@ -48,7 +48,7 @@ const Order = () => {
 
 
         // key: razorpay.clientId,
-        key:"rzp_test_yo2PnQeOMGUAU5",
+        key:"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 
 
 
