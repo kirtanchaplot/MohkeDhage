@@ -1,10 +1,9 @@
 import { Link } from "react-router-dom";
-
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 import Messsage from "../../components/Message";
 import Loader from "../../components/Loader";
 import {
@@ -48,7 +47,7 @@ const Order = () => {
 
 
         // key: razorpay.clientId,
-        key:"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        key:"rzp_test_yo2PnQeOMGUAU5",              //////not to add on git
 
 
 
@@ -89,7 +88,6 @@ const Order = () => {
       console.error("Razorpay Error:", error);
     }
   };
-
   return isLoading ? (
     <Loader />
   ) : error ? (
@@ -121,6 +119,14 @@ const Order = () => {
                           src={item.image}
                           alt={item.name}
                           className="w-16 h-16 object-cover"
+                          onError={(e) => {
+                            console.error(`Failed to load image for ${item.name}: ${item.image}`);
+                            // Prevent infinite reload attempts
+                            e.target.onerror = null;
+                            // Set a fallback image
+                            e.target.src = '/placeholder.png';
+                          }}
+                          onLoad={() => console.log(`Successfully loaded: ${item.image}`)}
                         />
                       </td>
 
@@ -200,13 +206,16 @@ const Order = () => {
             {loadingRazorpay ? (
               <Loader />
             ) : (
-              <button
+              <motion.button
                 onClick={handleRazorpayPayment}
                 className="bg-pink-500 text-white w-full py-2 rounded"
                 disabled={loadingPay}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                transition={{ duration: 0.2 }}
               >
                 Pay with Razorpay
-              </button>
+              </motion.button>
             )}
           </div>
         )}
@@ -214,13 +223,16 @@ const Order = () => {
         {loadingDeliver && <Loader />}
         {userInfo && userInfo.isAdmin && order.isPaid && !order.isDelivered && (
           <div className="mt-4">
-            <button
+            <motion.button
               type="button"
               className="bg-pink-500 text-white w-full py-2 rounded"
               onClick={() => deliverOrder(orderId)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.2 }}
             >
               Mark As Delivered
-            </button>
+            </motion.button>
           </div>
         )}
       </div>
@@ -229,6 +241,3 @@ const Order = () => {
 };
 
 export default Order;
-
-
-
