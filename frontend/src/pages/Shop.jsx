@@ -18,7 +18,11 @@ const Shop = () => {
   );
 
   const categoriesQuery = useFetchCategoriesQuery();
-  const [priceFilter, setPriceFilter] = useState("");
+  
+  // Replace text input with a range slider value
+  const [priceRange, setPriceRange] = useState(10000);
+  const minPrice = 0;
+  const maxPrice = 5000;
 
   const filteredProductsQuery = useGetFilteredProductsQuery({
     checked,
@@ -34,25 +38,22 @@ const Shop = () => {
   useEffect(() => {
     if (!checked.length || !radio.length) {
       if (!filteredProductsQuery.isLoading) {
-        // Filter products based on both checked categories and price filter
+        // Filter products based on both checked categories and price range
         const filteredProducts = filteredProductsQuery.data.filter(
           (product) => {
-            // Check if the product price includes the entered price filter value
-            return (
-              product.price.toString().includes(priceFilter) ||
-              product.price === parseInt(priceFilter, 10)
-            );
+            // Check if the product price is less than or equal to the selected price range
+            return product.price <= priceRange;
           }
         );
 
         dispatch(setProducts(filteredProducts));
       }
     }
-  }, [checked, radio, filteredProductsQuery.data, dispatch, priceFilter]);
+  }, [checked, radio, filteredProductsQuery.data, dispatch, priceRange]);
 
   const handleBrandClick = (brand) => {
     const productsByBrand = filteredProductsQuery.data?.filter(
-      (product) => product.brand === brand
+      (product) => product.brand === brand && product.price <= priceRange
     );
     dispatch(setProducts(productsByBrand));
   };
@@ -76,14 +77,21 @@ const Shop = () => {
   ];
 
   const handlePriceChange = (e) => {
-    // Update the price filter state when the user types in the input filed
-    setPriceFilter(e.target.value);
+    // Update the price range when slider is moved
+    setPriceRange(Number(e.target.value));
   };
-
   // CSS classes for product hover animation
   const productCardStyle = {
     transition: "transform 0.3s ease, box-shadow 0.3s ease",
     cursor: "pointer",
+  };
+
+  // Calculate what percentage of the slider is filled
+  const sliderProgress = ((priceRange - minPrice) / (maxPrice - minPrice)) * 100;
+  
+  // Custom styles for slider
+  const sliderStyle = {
+    background: `linear-gradient(to right, #ec4899 0%, #ec4899 ${sliderProgress}%, #e5e7eb ${sliderProgress}%, #e5e7eb 100%)`,
   };
 
   return (
@@ -145,17 +153,34 @@ const Shop = () => {
             </div>
 
             <h2 className="h4 text-center py-2 bg-black rounded-full mb-2">
-              Filer by Price
+              Filter by Price
             </h2>
 
             <div className="p-5 w-[15rem]">
-              <input
-                type="text"
-                placeholder="Enter Price"
-                value={priceFilter}
-                onChange={handlePriceChange}
-                className="w-full px-3 py-2 placeholder-gray-400 border rounded-lg focus:outline-none focus:ring focus:border-pink-300"
-              />
+              {/* Replace text input with a slider */}
+              <div className="price-slider-container">
+                <input
+                  type="range"
+                  min={minPrice}
+                  max={maxPrice}
+                  value={priceRange}
+                  onChange={handlePriceChange}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  style={sliderStyle}
+                />
+                <div className="flex justify-between mt-2">
+                  <span className="text-white text-sm">₹{minPrice}</span>
+                  <span className="text-white text-sm font-medium">₹{priceRange}</span>
+                  <span className="text-white text-sm">₹{maxPrice}</span>
+                </div>
+              </div>
+              
+              {/* Add animation for the price updates */}
+              <div className="mt-4 text-center">
+                <div className="text-white font-medium bg-pink-500 bg-opacity-20 py-1 px-2 rounded-md transition-all duration-300">
+                  Showing products from ₹{minPrice} to ₹{priceRange}
+                </div>
+              </div>
             </div>
 
             <div className="p-5 pt-0">
