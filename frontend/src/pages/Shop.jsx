@@ -1,7 +1,9 @@
+//all change
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useGetFilteredProductsQuery } from "../redux/api/productApiSlice";
 import { useFetchCategoriesQuery } from "../redux/api/categoryApiSlice";
+import { FaFilter, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 import {
   setCategories,
@@ -18,6 +20,24 @@ const Shop = () => {
   );
 
   const categoriesQuery = useFetchCategoriesQuery();
+  
+  // Mobile filter visibility state
+  const [showFilters, setShowFilters] = useState(false);
+  
+  // Collapsible sections for mobile
+  const [expandedSections, setExpandedSections] = useState({
+    categories: true,
+    brands: true,
+    price: true
+  });
+  
+  // Toggle section expansion
+  const toggleSection = (section) => {
+    setExpandedSections({
+      ...expandedSections,
+      [section]: !expandedSections[section]
+    });
+  };
   
   // Replace text input with a range slider value
   const [priceRange, setPriceRange] = useState(10000);
@@ -56,6 +76,11 @@ const Shop = () => {
       (product) => product.brand === brand && product.price <= priceRange
     );
     dispatch(setProducts(productsByBrand));
+    
+    // Close mobile filters after selection on small screens
+    if (window.innerWidth < 768) {
+      setShowFilters(false);
+    }
   };
 
   const handleCheck = (value, id) => {
@@ -80,11 +105,6 @@ const Shop = () => {
     // Update the price range when slider is moved
     setPriceRange(Number(e.target.value));
   };
-  // CSS classes for product hover animation
-  const productCardStyle = {
-    transition: "transform 0.3s ease, box-shadow 0.3s ease",
-    cursor: "pointer",
-  };
 
   // Calculate what percentage of the slider is filled
   const sliderProgress = ((priceRange - minPrice) / (maxPrice - minPrice)) * 100;
@@ -93,134 +113,165 @@ const Shop = () => {
   const sliderStyle = {
     background: `linear-gradient(to right, #ec4899 0%, #ec4899 ${sliderProgress}%, #e5e7eb ${sliderProgress}%, #e5e7eb 100%)`,
   };
+  
+  const resetFilters = () => {
+    window.location.reload();
+  };
 
   return (
-    <>
-      <div className="container mx-auto">
-        <div className="flex md:flex-row">
-          <div className="bg-[#151515] p-3 mt-2 mb-2">
-            <h2 className="h4 text-center py-2 bg-black rounded-full mb-2">
-              Filter by Categories
-            </h2>
-
-            <div className="p-5 w-[15rem]">
-              {categories?.map((c) => (
-                <div key={c._id} className="mb-2">
-                  <div className="flex ietms-center mr-4">
-                    <input
-                      type="checkbox"
-                      id="red-checkbox"
-                      onChange={(e) => handleCheck(e.target.checked, c._id)}
-                      className="w-4 h-4 text-pink-600 bg-gray-100 border-gray-300 rounded focus:ring-pink-500 dark:focus:ring-pink-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    />
-
-                    <label
-                      htmlFor="pink-checkbox"
-                      className="ml-2 text-sm font-medium text-white dark:text-gray-300"
-                    >
-                      {c.name}
-                    </label>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <h2 className="h4 text-center py-2 bg-black rounded-full mb-2">
-              Filter by Brands
-            </h2>
-
-            <div className="p-5">
-              {uniqueBrands?.map((brand) => (
-                <>
-                  <div className="flex items-enter mr-4 mb-5">
-                    <input
-                      type="radio"
-                      id={brand}
-                      name="brand"
-                      onChange={() => handleBrandClick(brand)}
-                      className="w-4 h-4 text-pink-400 bg-gray-100 border-gray-300 focus:ring-pink-500 dark:focus:ring-pink-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                    />
-
-                    <label
-                      htmlFor="pink-radio"
-                      className="ml-2 text-sm font-medium text-white dark:text-gray-300"
-                    >
-                      {brand}
-                    </label>
-                  </div>
-                </>
-              ))}
-            </div>
-
-            <h2 className="h4 text-center py-2 bg-black rounded-full mb-2">
-              Filter by Price
-            </h2>
-
-            <div className="p-5 w-[15rem]">
-              {/* Replace text input with a slider */}
-              <div className="price-slider-container">
-                <input
-                  type="range"
-                  min={minPrice}
-                  max={maxPrice}
-                  value={priceRange}
-                  onChange={handlePriceChange}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                  style={sliderStyle}
-                />
-                <div className="flex justify-between mt-2">
-                  <span className="text-white text-sm">₹{minPrice}</span>
-                  <span className="text-white text-sm font-medium">₹{priceRange}</span>
-                  <span className="text-white text-sm">₹{maxPrice}</span>
-                </div>
-              </div>
-              
-              {/* Add animation for the price updates */}
-              <div className="mt-4 text-center">
-                <div className="text-white font-medium bg-pink-500 bg-opacity-20 py-1 px-2 rounded-md transition-all duration-300">
-                  Showing products from ₹{minPrice} to ₹{priceRange}
-                </div>
-              </div>
-            </div>
-
-            <div className="p-5 pt-0">
-              <button
-                className="w-full border my-4"
-                onClick={() => window.location.reload()}
+    <div className="container mx-auto px-4 py-8">
+      {/* Mobile Filter Toggle Button */}
+      <div className="md:hidden flex justify-between items-center mb-4">
+        <button 
+          onClick={() => setShowFilters(!showFilters)} 
+          className="flex items-center bg-pink-600 text-white py-2 px-4 rounded"
+        >
+          {showFilters ? <FaTimes className="mr-2" /> : <FaFilter className="mr-2" />}
+          {showFilters ? "Hide Filters" : "Show Filters"}
+        </button>
+        <h2 className="text-lg font-medium">{products?.length} Products</h2>
+      </div>
+      
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Filters sidebar - with mobile responsiveness */}
+        <div className={`${showFilters ? 'block' : 'hidden'} md:block md:w-1/4 lg:w-1/5`}>
+          <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+            {/* Categories Section */}
+            <div className="border-b border-gray-700">
+              <button 
+                className="w-full px-4 py-3 bg-gray-900 flex justify-between items-center"
+                onClick={() => toggleSection('categories')}
               >
-                Reset
+                <h2 className="font-semibold">Categories</h2>
+                {expandedSections.categories ? <FaChevronUp /> : <FaChevronDown />}
+              </button>
+              
+              {expandedSections.categories && (
+                <div className="p-4">
+                  {categories?.map((c) => (
+                    <div key={c._id} className="mb-2 flex items-center">
+                      <input
+                        type="checkbox"
+                        id={`category-${c._id}`}
+                        onChange={(e) => handleCheck(e.target.checked, c._id)}
+                        className="w-4 h-4 text-pink-600 bg-gray-700 border-gray-600 rounded focus:ring-pink-500"
+                      />
+                      <label
+                        htmlFor={`category-${c._id}`}
+                        className="ml-2 text-sm"
+                      >
+                        {c.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            {/* Brands Section */}
+            <div className="border-b border-gray-700">
+              <button 
+                className="w-full px-4 py-3 bg-gray-900 flex justify-between items-center"
+                onClick={() => toggleSection('brands')}
+              >
+                <h2 className="font-semibold">Brands</h2>
+                {expandedSections.brands ? <FaChevronUp /> : <FaChevronDown />}
+              </button>
+              
+              {expandedSections.brands && (
+                <div className="p-4">
+                  {uniqueBrands?.map((brand) => (
+                    <div key={brand} className="mb-2 flex items-center">
+                      <input
+                        type="radio"
+                        id={`brand-${brand}`}
+                        name="brand"
+                        onChange={() => handleBrandClick(brand)}
+                        className="w-4 h-4 text-pink-600 bg-gray-700 border-gray-600 focus:ring-pink-500"
+                      />
+                      <label
+                        htmlFor={`brand-${brand}`}
+                        className="ml-2 text-sm"
+                      >
+                        {brand}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            {/* Price Range Section */}
+            <div className="border-b border-gray-700">
+              <button 
+                className="w-full px-4 py-3 bg-gray-900 flex justify-between items-center"
+                onClick={() => toggleSection('price')}
+              >
+                <h2 className="font-semibold">Price Range</h2>
+                {expandedSections.price ? <FaChevronUp /> : <FaChevronDown />}
+              </button>
+              
+              {expandedSections.price && (
+                <div className="p-4">
+                  <input
+                    type="range"
+                    min={minPrice}
+                    max={maxPrice}
+                    value={priceRange}
+                    onChange={handlePriceChange}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+                    style={sliderStyle}
+                  />
+                  <div className="flex justify-between mt-2 text-sm">
+                    <span>₹{minPrice}</span>
+                    <span className="font-medium text-pink-400">₹{priceRange}</span>
+                    <span>₹{maxPrice}</span>
+                  </div>
+                  
+                  <div className="mt-4 text-center">
+                    <div className="text-sm bg-pink-500 bg-opacity-20 py-1 px-2 rounded">
+                      ₹{minPrice} - ₹{priceRange}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Reset Button */}
+            <div className="p-4">
+              <button
+                className="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 rounded transition-colors"
+                onClick={resetFilters}
+              >
+                Reset Filters
               </button>
             </div>
           </div>
-
-          <div className="p-3">
-            <h2 className="h4 text-center mb-2">{products?.length} Products</h2>
-            <div className="flex flex-wrap">
-              {products.length === 0 ? (
-                <Loader />
-              ) : (
-                products?.map((p) => (
-                  <div 
-                    className="p-3 product-card-container" 
-                    key={p._id}
-                    style={{
-                      perspective: "1000px",
-                    }}
-                  >
-                    <div
-                      className="product-card-wrapper transition-all duration-300 hover:scale-110 hover:shadow-lg hover:z-10 rounded-lg overflow-hidden"
-                      style={productCardStyle}
-                    >
-                      <ProductCard p={p} />
-                    </div>
-                  </div>
-                ))
-              )}
+        </div>
+        
+        {/* Products Grid */}
+        <div className="flex-1">
+          <h2 className="text-xl font-semibold mb-4 hidden md:block">{products?.length} Products</h2>
+          
+          {products.length === 0 ? (
+            <div className="flex justify-center items-center py-12">
+              <Loader />
             </div>
-          </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {products?.map((p) => (
+                <div 
+                  className="transform transition-all duration-300 hover:scale-105" 
+                  key={p._id}
+                >
+                  <ProductCard p={p} />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

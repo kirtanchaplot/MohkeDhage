@@ -1,3 +1,5 @@
+//all change
+
 import { useGetTopProductsQuery } from "../../redux/api/productApiSlice";
 import Message from "../../components/Message";
 import Slider from "react-slick";
@@ -16,7 +18,7 @@ const ProductCarousel = () => {
   const { data: products, isLoading, error } = useGetTopProductsQuery();
 
   const settings = {
-    dots: false,
+    dots: true,
     infinite: true,
     speed: 500,
     slidesToShow: 1,
@@ -24,10 +26,26 @@ const ProductCarousel = () => {
     arrows: true,
     autoplay: true,
     autoplaySpeed: 3000,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          arrows: true,
+          dots: true
+        }
+      },
+      {
+        breakpoint: 768,
+        settings: {
+          arrows: false,
+          dots: true
+        }
+      }
+    ]
   };
 
   return (
-    <div className="mb-4 lg:block xl:block md:block">
+    <div className="mb-4 w-full px-4 sm:px-0">
       {isLoading ? null : error ? (
         <Message variant="danger">
           {error?.data?.message || error.error}
@@ -35,7 +53,7 @@ const ProductCarousel = () => {
       ) : (
         <Slider
           {...settings}
-          className="xl:w-[50rem]  lg:w-[50rem] md:w-[56rem] sm:w-[40rem] sm:block"
+          className="w-full"
         >
           {products.map(
             ({
@@ -51,51 +69,49 @@ const ProductCarousel = () => {
               quantity,
               countInStock,
             }) => (
-              <div key={_id}>
-                <img
-                  src={image}
-                  alt={name}
-                  className="w-full rounded-lg object-cover h-[30rem]"
-                />
+              <div key={_id} className="px-1 sm:px-2">
+                <div className="relative">
+                  <img
+                    src={image}
+                    alt={name}
+                    className="w-full rounded-lg object-cover h-48 sm:h-64 md:h-80 lg:h-96"
+                  />
+                </div>
 
-                <div className="mt-4 flex justify-between">
-                  <div className="one">
-                    <h2>{name}</h2>
-                    <p> ₹ {price}</p> <br /> <br />
-                    <p className="w-[25rem]">
+                <div className="mt-4 flex flex-col lg:flex-row justify-between gap-4">
+                  <div className="flex-1">
+                    <h2 className="font-bold text-lg sm:text-xl md:text-2xl">{name}</h2>
+                    <p className="text-lg sm:text-xl md:text-2xl font-bold mt-1 text-pink-500"> ₹ {price}</p>
+                    <p className="mt-2 sm:mt-4 text-sm sm:text-base text-[#B0B0B0] line-clamp-3 md:line-clamp-4">
                       {description.substring(0, 170)} ...
                     </p>
                   </div>
 
-                  <div className="flex justify-between w-[20rem]">
-                    <div className="one">
-                      <h1 className="flex items-center mb-6">
-                        <FaStore className="mr-2 text-white" /> Brand: {brand}
-                      </h1>
-                      <h1 className="flex items-center mb-6">
-                        <FaClock className="mr-2 text-white" /> Added:{" "}
-                        {moment(createdAt).fromNow()}
-                      </h1>
-                      <h1 className="flex items-center mb-6">
-                        <FaStar className="mr-2 text-white" /> Reviews:
-                        {numReviews}
-                      </h1>
-                    </div>
-
-                    <div className="two">
-                      <h1 className="flex items-center mb-6">
-                        <FaStar className="mr-2 text-white" /> Ratings:{" "}
-                        {Math.round(rating)}
-                      </h1>
-                      <h1 className="flex items-center mb-6">
-                        <FaShoppingCart className="mr-2 text-white" /> Quantity:{" "}
-                        {quantity}
-                      </h1>
-                      <h1 className="flex items-center mb-6">
-                        <FaBox className="mr-2 text-white" /> In Stock:{" "}
-                        {countInStock}
-                      </h1>
-                    </div>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1 sm:gap-y-2 text-xs sm:text-sm">
+                    <h1 className="flex items-center">
+                      <FaStore className="mr-2 text-white flex-shrink-0" /> 
+                      <span className="truncate">Brand: {brand}</span>
+                    </h1>
+                    <h1 className="flex items-center">
+                      <FaStar className="mr-2 text-white flex-shrink-0" /> 
+                      <span className="truncate">Ratings: {Math.round(rating)}</span>
+                    </h1>
+                    <h1 className="flex items-center">
+                      <FaClock className="mr-2 text-white flex-shrink-0" /> 
+                      <span className="truncate">Added: {moment(createdAt).fromNow()}</span>
+                    </h1>
+                    <h1 className="flex items-center">
+                      <FaShoppingCart className="mr-2 text-white flex-shrink-0" /> 
+                      <span className="truncate">Quantity: {quantity}</span>
+                    </h1>
+                    <h1 className="flex items-center">
+                      <FaStar className="mr-2 text-white flex-shrink-0" /> 
+                      <span className="truncate">Reviews: {numReviews}</span>
+                    </h1>
+                    <h1 className="flex items-center">
+                      <FaBox className="mr-2 text-white flex-shrink-0" /> 
+                      <span className="truncate">In Stock: {countInStock}</span>
+                    </h1>
                   </div>
                 </div>
               </div>

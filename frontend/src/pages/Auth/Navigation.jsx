@@ -5,6 +5,8 @@ import {
   AiOutlineLogin,
   AiOutlineUserAdd,
   AiOutlineShoppingCart,
+  AiOutlineMenu,
+  AiOutlineClose
 } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
@@ -21,12 +23,15 @@ const Navigation = () => {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
- 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,17 +43,17 @@ const Navigation = () => {
       await logoutApiCall().unwrap();
       dispatch(logout());
       navigate("/login");
+      if (mobileMenuOpen) setMobileMenuOpen(false);
     } catch (error) {
       console.error(error);
     }
   };
 
-  return (
+  // Desktop Navigation
+  const DesktopNav = () => (
     <div
       style={{ zIndex: 9999 }}
-      className={`${
-        showSidebar ? "hidden" : "flex"
-      } xl:flex lg:flex md:hidden sm:hidden flex-col justify-between p-4 text-white bg-[#100f0f] w-[4%] hover:w-[15%] h-[100vh]  fixed `}
+      className="hidden md:flex flex-col justify-between p-4 text-white bg-[#100f0f] w-[4%] hover:w-[15%] h-[100vh] fixed"
       id="navigation-container"
     >
       <div className="flex flex-col justify-center space-y-4">
@@ -57,7 +62,7 @@ const Navigation = () => {
           className="flex items-center transition-transform transform hover:translate-x-2"
         >
           <AiOutlineHome className="mr-2 mt-[3rem]" size={26} />
-          <span className="hidden nav-item-name mt-[3rem]">HOME</span>{" "}
+          <span className="hidden nav-item-name mt-[3rem]">HOME</span>
         </Link>
 
         <Link
@@ -65,13 +70,13 @@ const Navigation = () => {
           className="flex items-center transition-transform transform hover:translate-x-2"
         >
           <AiOutlineShopping className="mr-2 mt-[3rem]" size={26} />
-          <span className="hidden nav-item-name mt-[3rem]">SHOP</span>{" "}
+          <span className="hidden nav-item-name mt-[3rem]">SHOP</span>
         </Link>
 
         <Link to="/cart" className="flex relative">
           <div className="flex items-center transition-transform transform hover:translate-x-2">
             <AiOutlineShoppingCart className="mt-[3rem] mr-2" size={26} />
-            <span className="hidden nav-item-name mt-[3rem]">Cart</span>{" "}
+            <span className="hidden nav-item-name mt-[3rem]">Cart</span>
           </div>
 
           <div className="absolute top-9">
@@ -90,7 +95,7 @@ const Navigation = () => {
             <FaHeart className="mt-[3rem] mr-2" size={20} />
             <span className="hidden nav-item-name mt-[3rem]">
               Favorites
-            </span>{" "}
+            </span>
             <FavoritesCount />
           </div>
         </Link>
@@ -217,9 +222,119 @@ const Navigation = () => {
       </div>
     </div>
   );
+
+  // Mobile Navigation
+  const MobileNav = () => (
+    <div className="md:hidden">
+      {/* Mobile Menu Button */}
+      <button 
+        onClick={toggleMobileMenu} 
+        className="fixed top-4 left-4 z-50 p-2 bg-[#100f0f] rounded-md text-white"
+      >
+        {mobileMenuOpen ? <AiOutlineClose size={24} /> : <AiOutlineMenu size={24} />}
+      </button>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 bg-[#100f0f] z-40 flex flex-col p-5 text-white">
+          <div className="flex justify-end">
+            <button onClick={toggleMobileMenu} className="p-2">
+              <AiOutlineClose size={24} />
+            </button>
+          </div>
+
+          <div className="flex flex-col items-center mt-10 space-y-6">
+            {userInfo && (
+              <div className="mb-8 text-center">
+                <span className="text-xl font-semibold">{userInfo.username}</span>
+              </div>
+            )}
+
+            <Link to="/" className="flex items-center space-x-4" onClick={() => setMobileMenuOpen(false)}>
+              <AiOutlineHome size={24} />
+              <span>Home</span>
+            </Link>
+
+            <Link to="/shop" className="flex items-center space-x-4" onClick={() => setMobileMenuOpen(false)}>
+              <AiOutlineShopping size={24} />
+              <span>Shop</span>
+            </Link>
+
+            <Link to="/cart" className="flex items-center space-x-4" onClick={() => setMobileMenuOpen(false)}>
+              <div className="relative">
+                <AiOutlineShoppingCart size={24} />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 px-1 py-0 text-xs text-white bg-pink-500 rounded-full">
+                    {cartItems.reduce((a, c) => a + c.qty, 0)}
+                  </span>
+                )}
+              </div>
+              <span>Cart</span>
+            </Link>
+
+            <Link to="/favorite" className="flex items-center space-x-4" onClick={() => setMobileMenuOpen(false)}>
+              <div className="relative">
+                <FaHeart size={20} />
+                <FavoritesCount />
+              </div>
+              <span>Favorites</span>
+            </Link>
+
+            {userInfo ? (
+              <>
+                {userInfo.isAdmin && (
+                  <div className="flex flex-col items-center space-y-4 mt-4 border-t border-gray-700 pt-4 w-full">
+                    <span className="font-semibold text-pink-500">Admin Options</span>
+                    <Link to="/admin/dashboard" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                      Dashboard
+                    </Link>
+                    <Link to="/admin/productlist" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                      Products
+                    </Link>
+                    <Link to="/admin/categorylist" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                      Categories
+                    </Link>
+                    <Link to="/admin/orderlist" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                      Orders
+                    </Link>
+                    <Link to="/admin/userlist" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                      Users
+                    </Link>
+                  </div>
+                )}
+                <div className="flex flex-col items-center space-y-4 mt-4 border-t border-gray-700 pt-4 w-full">
+                  <Link to="/profile" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                    Profile
+                  </Link>
+                  <button onClick={logoutHandler} className="w-full text-center py-2 text-pink-500">
+                    Logout
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center space-y-4 mt-4 border-t border-gray-700 pt-4 w-full">
+                <Link to="/login" className="w-full text-center py-2 flex items-center justify-center space-x-2" onClick={() => setMobileMenuOpen(false)}>
+                  <AiOutlineLogin size={20} />
+                  <span>Login</span>
+                </Link>
+                <Link to="/register" className="w-full text-center py-2 flex items-center justify-center space-x-2" onClick={() => setMobileMenuOpen(false)}>
+                  <AiOutlineUserAdd size={20} />
+                  <span>Register</span>
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <>
+      <DesktopNav />
+      <MobileNav />
+    </>
+  );
 };
 
 export default Navigation;
-
-
-
