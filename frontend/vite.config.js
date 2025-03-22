@@ -1,16 +1,36 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  root: ".",  // Ensure the root is the "frontend" folder
+  plugins: [react()],
+  build: {
+    outDir: "dist", // Output folder
+    emptyOutDir: true, // Ensure old builds are cleared
+  },
   server: {
     proxy: {
-      // Remove localhost since backend is on Render
       "/api/": "https://mohkedhage.onrender.com",
     },
   },
 });
+
+
+
+
+// import { defineConfig } from "vite";
+// import react from "@vitejs/plugin-react";
+// import tailwindcss from "@tailwindcss/vite";
+
+// export default defineConfig({
+//   plugins: [react(), tailwindcss()],
+//   server: {
+//     proxy: {
+//       // Remove localhost since backend is on Render
+//       "/api/": "https://mohkedhage.onrender.com",
+//     },
+//   },
+// });
 
 
 
