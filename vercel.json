@@ -1,5 +1,6 @@
 {
     "framework": "vite",
+    "outputDirectory": "dist",
     "routes": [
       { "handle": "filesystem" },
       { "src": "/api/(.*)", "dest": "https://mohkedhage.onrender.com/api/$1" },
