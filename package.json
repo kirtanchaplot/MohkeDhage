@@ -6,10 +6,9 @@
   "scripts": {
     "start": "node backend/index.js",
   "backend": "nodemon backend/index.js",
-  "build": "npm run build --prefix frontend",
+  "vercel-build": "cd frontend && npm install && npm run build && ls -la dist",
   "frontend": "npm run dev --prefix frontend",
-  "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
-  "vercel-build": "cd frontend && npm install && npm run build"
+  "dev": "concurrently \"npm run frontend\" \"npm run backend\""
   },
   "keywords": [],
   "author": "",
