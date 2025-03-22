@@ -7,6 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       // Remove localhost since backend is on Render
+      "/api/": "https://mohkedhage.onrender.com",
     },
   },
 });
