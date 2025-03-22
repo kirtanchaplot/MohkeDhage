@@ -106,7 +106,7 @@ const ProductCarousel = () => {
                     </h1>
                     <h1 className="flex items-center">
                       <FaStar className="mr-2 text-white flex-shrink-0" /> 
-                      <span className="truncate">Reviews: {numReviews}</span>
+                      <span className="truncate">Review: {numReviews}</span>
                     </h1>
                     <h1 className="flex items-center">
                       <FaBox className="mr-2 text-white flex-shrink-0" /> 

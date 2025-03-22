@@ -44,7 +44,8 @@ router.post("/", (req, res) => {
 
       res.status(200).json({
         message: "Image uploaded successfully",
-        image: req.file.path,
+        // image: req.file.path,
+        image: `/uploads/${path.basename(req.file.path)}`,
       });
     } catch (error) {
       console.error("Unexpected Error:", error.message);

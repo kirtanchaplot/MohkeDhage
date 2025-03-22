@@ -44,7 +44,7 @@ const AllProducts = () => {
                 <div className="flex flex-col sm:flex-row">
                   <div className="w-full sm:w-[120px] md:w-[150px] h-[150px] sm:h-auto overflow-hidden">
                     <img
-                      src={product.image}
+                      src={product.image?.startsWith('/') ? product.image : `/${product.image}`}
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />

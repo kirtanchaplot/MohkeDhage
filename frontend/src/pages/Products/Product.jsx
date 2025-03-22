@@ -20,7 +20,7 @@ const Product = ({ product }) => {
           <h2 className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
             <div className="text-base md:text-lg font-medium line-clamp-1">{product.name}</div>
             <span className="bg-pink-100 text-pink-800 text-sm font-medium px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300 whitespace-nowrap">
-              ₹ {product.price}
+              ₹{product.price}
             </span>
           </h2>
         </Link>

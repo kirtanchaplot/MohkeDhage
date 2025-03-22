@@ -49,7 +49,8 @@ const OrderList = () => {
                     <tr key={order._id} className="border-b hover:bg-green-800">
                       <td className="p-3">
                         <img
-                          src={order.orderItems[0].image}
+                          src={order.orderItems[0].image.startsWith('/') ? order.orderItems[0].image : `/${order.orderItems[0].image}`}
+                          // src={order.orderItems[0].image}
                           alt={order._id}
                           className="w-16 h-16 object-cover rounded"
                         />
@@ -99,7 +100,8 @@ const OrderList = () => {
                 <div key={order._id} className="bg-black-100 rounded-lg shadow-sm p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <img
-                      src={order.orderItems[0].image}
+                       src={order.orderItems[0].image.startsWith('/') ? order.orderItems[0].image : `/${order.orderItems[0].image}`}
+                      // src={order.orderItems[0].image}
                       alt={order._id}
                       className="w-16 h-16 object-cover rounded"
                     />
