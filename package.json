@@ -8,7 +8,8 @@
   "backend": "nodemon backend/index.js",
   "vercel-build": "cd frontend && rm -rf node_modules && npm install && npm run build",
   "frontend": "npm run dev --prefix frontend",
-  "dev": "concurrently \"npm run frontend\" \"npm run backend\""
+  "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
+  "build": "vite build"
   },
   "keywords": [],
   "author": "",
