@@ -20,9 +20,18 @@ connectDB();
 
 const app = express();
 
+// ✅ Apply CORS to all routes
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "https://mohkedhage.vercel.app");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
 // ✅ Fix: CORS Middleware at the top
 app.use(cors({
-  origin: ["https://mohkedhage.vercel.app"], // ✅ No trailing slash
+  // origin: ["https://mohkedhage.vercel.app", "http://localhost:5173"], // ✅ No trailing slash
+  origin: "*",  // 🚨 For testing only, not for production
   methods: "GET,POST,PUT,DELETE",
   credentials: true
 }));
