@@ -28,44 +28,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ CORS Middleware - More flexible for dynamic domains
+// ✅ CORS Middleware
 app.use(
   cors({
-    origin: function(origin, callback) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      
-      // Allow localhost and specific domains
-      if (origin === 'http://localhost:5173' || 
-          origin === 'https://mohkedhage.vercel.app' || 
-          origin.includes('kirtans-projects') || 
-          origin.includes('mohke-dhage')) {
-        return callback(null, true);
-      }
-      
-      callback(new Error('Not allowed by CORS'));
-    },
+    origin: ["https://mohkedhage.vercel.app", "http://localhost:5173"], // Adjust for your frontend
     methods: "GET, POST, PUT, DELETE",
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
 // ✅ Custom Headers for Debugging CORS Issues
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  
-  if (!origin || 
-      origin === 'http://localhost:5173' || 
-      origin === 'https://mohkedhage.vercel.app' || 
-      origin.includes('kirtans-projects') || 
-      origin.includes('mohke-dhage')) {
-    res.setHeader("Access-Control-Allow-Origin", origin || "*");
-  }
-  
+  res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
 });
 
@@ -76,31 +52,21 @@ app.use("/api/products", productRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/orders", orderRoutes);
 
-//  Razorpay Config Route
+// ✅ Razorpay Config Route
 app.get("/api/config/razorpay", (req, res) => {
   res.send({ clientId: process.env.RAZORPAY_KEY_ID });
 });
 
-//  Serve Uploaded Images
+// ✅ Serve Uploaded Images
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 
-// Add debug route to check uploads directory
-app.get("/debug/uploads", (req, res) => {
-  const uploadsDir = path.join(__dirname, "/uploads");
-  res.send({
-    uploadsDir,
-    exists: require('fs').existsSync(uploadsDir),
-    message: "Use this information to debug image loading issues"
-  });
-});
-
-//  Test Route
+// ✅ Test Route
 app.get("/", (req, res) => {
   res.send("Server is running... 🚀");
 });
 
-//  Start Server
+// ✅ Start Server
 app.listen(port, () => console.log(`Server running on port: ${port}`));
 
 

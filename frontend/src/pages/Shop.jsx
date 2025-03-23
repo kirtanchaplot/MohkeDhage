@@ -40,7 +40,7 @@ const Shop = () => {
   };
   
   // Replace text input with a range slider value
-  const [priceRange, setPriceRange] = useState(10000);
+  const [priceRange, setPriceRange] = useState(5000);
   const minPrice = 0;
   const maxPrice = 5000;
 

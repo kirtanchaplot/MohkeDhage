@@ -8,7 +8,8 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "vercel-build": "chmod +x node_modules/.bin/vite && vite build"
+    
+    "vercel-build": "npx vite build"
   },
   "dependencies": {
     "@paypal/react-paypal-js": "^8.8.2",
