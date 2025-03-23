@@ -25,7 +25,8 @@ app.use(cors({
   origin: [
     "https://mohkedhage.vercel.app", 
     "http://localhost:5173",
-    "https://mohke-dhage-em3jgqk8i-kirtans-projects-4eedf56b.vercel.app"
+    "https://mohke-dhage-em3jgqk8i-kirtans-projects-4eedf56b.vercel.app",
+    "https://mohke-dhage-mwww1ek9w-kirtans-projects-4eedf56b.vercel.app"
   ],
   methods: "GET,POST,PUT,DELETE",
   credentials: true
