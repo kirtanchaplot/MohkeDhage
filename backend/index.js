@@ -28,14 +28,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ✅ CORS Middleware
+// ✅ CORS Middleware - More flexible for dynamic domains
 app.use(
   cors({
-    origin: [
-      "https://mohkedhage.vercel.app", 
-      "https://mohke-dhage-m2njhx6xq-kirtans-projects-4eedf56b.vercel.app", 
-      "http://localhost:5173"
-    ],
+    origin: function(origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      // Allow localhost and specific domains
+      if (origin === 'http://localhost:5173' || 
+          origin === 'https://mohkedhage.vercel.app' || 
+          origin.includes('kirtans-projects') || 
+          origin.includes('mohke-dhage')) {
+        return callback(null, true);
+      }
+      
+      callback(new Error('Not allowed by CORS'));
+    },
     methods: "GET, POST, PUT, DELETE",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -44,15 +53,14 @@ app.use(
 
 // ✅ Custom Headers for Debugging CORS Issues
 app.use((req, res, next) => {
-  const allowedOrigins = [
-    "https://mohkedhage.vercel.app",
-    "https://mohke-dhage-m2njhx6xq-kirtans-projects-4eedf56b.vercel.app",
-    "http://localhost:5173"
-  ];
-  
   const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
+  
+  if (!origin || 
+      origin === 'http://localhost:5173' || 
+      origin === 'https://mohkedhage.vercel.app' || 
+      origin.includes('kirtans-projects') || 
+      origin.includes('mohke-dhage')) {
+    res.setHeader("Access-Control-Allow-Origin", origin || "*");
   }
   
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
@@ -76,6 +84,16 @@ app.get("/api/config/razorpay", (req, res) => {
 //  Serve Uploaded Images
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
+
+// Add debug route to check uploads directory
+app.get("/debug/uploads", (req, res) => {
+  const uploadsDir = path.join(__dirname, "/uploads");
+  res.send({
+    uploadsDir,
+    exists: require('fs').existsSync(uploadsDir),
+    message: "Use this information to debug image loading issues"
+  });
+});
 
 //  Test Route
 app.get("/", (req, res) => {
