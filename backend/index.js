@@ -20,17 +20,24 @@ connectDB();
 
 const app = express();
 
-// CORS Middleware configuration
-app.use(cors({
-  origin: [
-    "https://mohkedhage.vercel.app", 
-    "http://localhost:5173",
-    "https://mohke-dhage-em3jgqk8i-kirtans-projects-4eedf56b.vercel.app",
-    "https://mohke-dhage-mwww1ek9w-kirtans-projects-4eedf56b.vercel.app"
-  ],
-  methods: "GET,POST,PUT,DELETE",
-  credentials: true
-}));
+// More permissive CORS configuration
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  // Allow requests from any Vercel domain or localhost
+  if (origin && (origin.includes('vercel.app') || origin.includes('localhost'))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+  }
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  next();
+});
 
 // Middleware
 app.use(express.json());
