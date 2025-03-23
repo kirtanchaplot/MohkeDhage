@@ -1,3 +1,19 @@
+const cors = require("cors");
+const express = require("express");
+const app = express();
+
+app.use(cors({
+  origin: ["https://mohke-dhage.vercel.app/"], // Replace with your Vercel domain
+  methods: "GET,POST,PUT,DELETE",
+  credentials: true
+}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
+
+
 
 // packages
 import path from "path";
