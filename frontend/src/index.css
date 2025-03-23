@@ -1,6 +1,5 @@
-@import "tailwindcss";
-/* @tailwind base;
-@tailwind components; */
+/* @import "tailwindcss";
+@tailwind utilities;
 
 body {
     background: #131314;
@@ -10,4 +9,38 @@ body {
   input,
   textarea {
     color: #fdfdfd;
+  } */
+
+
+  /* @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+  
+  @layer base {
+    body {
+      background: #131314;
+      color: #fffefe;
+    }
+    
+    input,
+    textarea {
+      color: #fdfdfd;
+    }
+  } */
+
+  @import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Your custom styles */
+@layer base {
+  body {
+    background: #131314;
+    color: #fffefe;
   }
+  
+  input,
+  textarea {
+    color: #fdfdfd;
+  }
+}

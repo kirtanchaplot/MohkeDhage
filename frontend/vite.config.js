@@ -1,47 +1,45 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-
-export default defineConfig({
-  root: ".",  // Ensure the root is the "frontend" folder
-  plugins: [react()],
-  build: {
-    outDir: "dist", // Output folder
-    emptyOutDir: true, // Ensure old builds are cleared
-  },
-  server: {
-    proxy: {
-      "/api/": "https://mohkedhage.onrender.com",
-    },
-  },
-});
-
-
-
-
 // import { defineConfig } from "vite";
 // import react from "@vitejs/plugin-react";
-// import tailwindcss from "@tailwindcss/vite";
 
 // export default defineConfig({
-//   plugins: [react(), tailwindcss()],
+//   root: ".",
+//   plugins: [react()],
+//   build: {
+//     outDir: "dist",
+//     emptyOutDir: true,
+//   },
 //   server: {
 //     proxy: {
-//       // Remove localhost since backend is on Render
 //       "/api/": "https://mohkedhage.onrender.com",
+//       "/uploads/": "https://mohkedhage.onrender.com" // Add this line to proxy image requests
 //     },
 //   },
 // });
 
 
 
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
-
-
-
-//   server: {
-//     proxy: {
-//       "/api/": "http://localhost:5000",
-//       "/uploads/": "http://localhost:5000",
-//     },
-//   },
-// })
+export default defineConfig({
+  root: ".",
+  plugins: [react()],
+  build: {
+    outDir: "dist",
+    emptyOutDir: true,
+  },
+  server: {
+    proxy: {
+      "/api/": {
+        target: "https://mohkedhage.onrender.com",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/uploads/": {
+        target: "https://mohkedhage.onrender.com",
+        changeOrigin: true,
+        secure: false,
+      }
+    },
+  },
+});
