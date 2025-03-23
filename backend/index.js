@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 
 app.use(cors({
-  origin: ["https://mohke-dhage.vercel.app/"], // Replace with your Vercel domain
+  origin: ["https://mohkedhage.vercel.app/"], // Replace with your Vercel domain
   methods: "GET,POST,PUT,DELETE",
   credentials: true
 }));
