@@ -31,7 +31,10 @@ app.use(cookieParser());
 // ✅ CORS Middleware - FIXED
 app.use(
   cors({
-    origin: ["https://mohkedhage.vercel.app", "http://localhost:5173"],
+    origin: ["https://mohkedhage.vercel.app", 
+              "http://localhost:5173",
+            /\.vercel\.app$/
+          ],
     methods: "GET, POST, PUT, DELETE",
     credentials: true,
     allowedHeaders: "Content-Type, Authorization"
