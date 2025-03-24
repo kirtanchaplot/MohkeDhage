@@ -3,6 +3,7 @@
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
 import { Link } from "react-router-dom";
+import getImageUrl from "../../Utils/imageUrl";
 import { useGetMyOrdersQuery } from "../../redux/api/orderApiSlice";
 
 const UserOrder = () => {
@@ -43,7 +44,9 @@ const UserOrder = () => {
                 <tr key={order._id} className="bg-gray-900 bg-opacity-50 hover:bg-gray-800 transition-colors">
                   <td className="py-3 px-4 hidden sm:table-cell">
                     <img
-                      src={order.orderItems[0].image}
+                      // src={order.orderItems[0].image}
+                      src={getImageUrl(order.orderItems[0].image)}//new11
+
                       alt={order.user}
                       className="w-16 h-16 object-cover rounded"
                     />

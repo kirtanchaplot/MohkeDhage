@@ -1,5 +1,5 @@
 //all change
-// import getImageUrl from "../../../Utils/imageUrl";
+
 import getImageUrl from "../../Utils/imageUrl";
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
