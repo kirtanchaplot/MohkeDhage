@@ -3,6 +3,7 @@ import Loader from "../../components/Loader";
 import { Link } from "react-router-dom";
 import { useGetOrdersQuery } from "../../redux/api/orderApiSlice";
 import AdminMenu from "./AdminMenu";
+import getImageUrl from "../../Utils/imageUrl";
 
 const OrderList = () => {
   const { data: orders, isLoading, error } = useGetOrdersQuery();
@@ -49,8 +50,9 @@ const OrderList = () => {
                     <tr key={order._id} className="border-b hover:bg-green-800">
                       <td className="p-3">
                         <img
-                          src={order.orderItems[0].image.startsWith('/') ? order.orderItems[0].image : `/${order.orderItems[0].image}`}
-                          // src={order.orderItems[0].image}
+                          // src={order.orderItems[0].image.startsWith('/') ? order.orderItems[0].image : `/${order.orderItems[0].image}`}
+                          src={getImageUrl(order.orderItems[0].image)}//new11
+                          
                           alt={order._id}
                           className="w-16 h-16 object-cover rounded"
                         />

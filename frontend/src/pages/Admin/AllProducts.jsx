@@ -3,6 +3,7 @@ import moment from "moment";
 import { useAllProductsQuery } from "../../redux/api/productApiSlice";
 import AdminMenu from "./AdminMenu";
 import Loader from "../../components/Loader";
+import getImageUrl from "../../Utils/imageUrl";
 
 const AllProducts = () => {
   const { data: products, isLoading, isError } = useAllProductsQuery();
@@ -44,7 +45,8 @@ const AllProducts = () => {
                 <div className="flex flex-col sm:flex-row">
                   <div className="w-full sm:w-[120px] md:w-[150px] h-[150px] sm:h-auto overflow-hidden">
                     <img
-                      src={product.image?.startsWith('/') ? product.image : `/${product.image}`}
+                      // src={product.image?.startsWith('/') ? product.image : `/${product.image}`}
+                      src={getImageUrl(product.image)}//new11
                       alt={product.name}
                       className="w-full h-full object-cover"
                     />
