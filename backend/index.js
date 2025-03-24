@@ -23,6 +23,8 @@ const app = express();
 // Allowed Origins
 const allowedOrigins = [
   "http://localhost:3000", // Local development
+  "http://localhost:5173",
+  "https://mohkedhage.vercel.app/",
   "https://mohke-dhage-aknjcw3p1-kirtans-projects-4eedf56b.vercel.app", // Old Vercel frontend
   "https://mohke-dhage-1h3spgwpe-kirtans-projects-4eedf56b.vercel.app", // Current Vercel frontend
   /^https:\/\/mohke-dhage-.*-kirtans-projects-4eedf56b\.vercel\.app$/ // Match any Vercel preview URL with this pattern
@@ -48,6 +50,7 @@ app.use(
         callback(new Error('Not allowed by CORS'));
       }
     },
+    
     credentials: true,
     methods: "GET, POST, PUT, DELETE, OPTIONS",
     allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"]
