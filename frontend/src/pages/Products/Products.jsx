@@ -1,5 +1,5 @@
 //all change
-
+import getImageUrl from "../../../Utils/imageUrl";
 import { useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -87,7 +87,8 @@ const Product = () => {
           <div className="flex flex-col md:flex-row gap-8 my-8">
             <div className="relative w-full md:w-1/2 lg:w-3/5">
               <img
-                src={product.image}
+                // src={product.image}
+                src={getImageUrl(product.image)}
                 alt={product.name}
                 className="w-full h-auto object-cover rounded-lg"
               />

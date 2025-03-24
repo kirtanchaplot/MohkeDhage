@@ -1,6 +1,7 @@
 //all change
 
 import { useGetTopProductsQuery } from "../../redux/api/productApiSlice";
+import getImageUrl from "../../../Utils/imageUrl";
 import Message from "../../components/Message";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -72,7 +73,8 @@ const ProductCarousel = () => {
               <div key={_id} className="px-1 sm:px-2">
                 <div className="relative">
                   <img
-                    src={image}
+                    // src={image}
+                    src={getImageUrl(image)}//new11
                     alt={name}
                     className="w-full rounded-lg object-cover h-48 sm:h-64 md:h-80 lg:h-96"
                   />
