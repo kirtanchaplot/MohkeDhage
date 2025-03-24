@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "../../redux/features/cart/cartSlice";
 import { toast } from "react-toastify";
 import HeartIcon from "./HeartIcon";
+import getImageUrl from "../../Utils/imageUrl";
 
 const ProductCard = ({ p }) => {
   const dispatch = useDispatch();
@@ -28,7 +29,8 @@ const ProductCard = ({ p }) => {
           <div className="overflow-hidden">
             <img
               className="w-full h-40 sm:h-48 md:h-52 object-cover transition-transform duration-300 hover:scale-105"
-              src={p?.image || "/placeholder-image.jpg"} 
+              // src={p?.image || "/placeholder-image.jpg"} 
+              src={getImageUrl(p?.image)}   //new1111
               alt={p?.name || "Product Image"}
             />
           </div>
