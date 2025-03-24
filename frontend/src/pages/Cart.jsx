@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaTrash, FaShoppingCart } from "react-icons/fa";
 import { addToCart, removeFromCart } from "../redux/features/cart/cartSlice";
-import { getImageUrl } from "../utils/getImageUrl";
+// import { getImageUrl } from "../Utils/getImageUrl";
+import getImageUrl from "../Utils/imageUrl"; 
 
 
 const Cart = () => {
