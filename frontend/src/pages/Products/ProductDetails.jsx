@@ -21,7 +21,7 @@ import HeartIcon from "./HeartIcon";
 import Ratings from "./Ratings";
 import ProductTabs from "./ProductTabs";
 import { addToCart } from "../../redux/features/cart/cartSlice";
-import getImageUrl from "../../Utils/imageUrl";
+// import getImageUrl from "../../Utils/imageUrl";
 
 const ProductDetails = () => {
   const { id: productId } = useParams();
@@ -115,8 +115,8 @@ const ProductDetails = () => {
             <>
               {console.log("Rendering Image:", product.image)}
               <img
-                      // src={product.image.startsWith('/') ? product.image : `/${product.image}`}
-                      src={getImageUrl(product?.image)}//new1111
+                      src={product.image.startsWith('/') ? product.image : `/${product.image}`}
+                      // src={getImageUrl(product?.image)}//new1111
                       alt={product.name}
                       className="w-full rounded-lg object-contain h-64 sm:h-80 md:h-96 lg:h-[32rem]"
                       onError={(e) => {

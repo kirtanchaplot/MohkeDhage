@@ -2,15 +2,15 @@
 
 import { Link } from "react-router-dom";
 import HeartIcon from "./HeartIcon";
-import getImageUrl from "../../../Utils/imageUrl";
+// import getImageUrl from "../../../Utils/imageUrl";
 
 const Product = ({ product }) => {
   return (
     <div className="w-full sm:w-64 md:w-72 lg:w-80 xl:w-96 p-3 mx-auto sm:mx-2">
       <div className="relative overflow-hidden rounded group">
         <img
-          // src={product.image}
-          src={getImageUrl(product.image)}//new111
+          src={product.image}
+          // src={getImageUrl(product.image)}//new111
           alt={product.name}
           className="w-full h-48 sm:h-56 md:h-64 rounded object-cover transition-transform duration-300 group-hover:scale-105"
         />
