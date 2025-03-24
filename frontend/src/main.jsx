@@ -5,6 +5,8 @@ import { Provider } from "react-redux";
 import store from "./redux/store";
 import { Route, RouterProvider, createRoutesFromElements, createBrowserRouter } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
+import getImageUrl from "./Utils/getImageUrl";
+
 
 // Auth
 import Login from "./pages/Auth/Login";

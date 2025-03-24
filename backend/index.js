@@ -21,7 +21,9 @@ const app = express();
 // Allowed Origins (Update with your Vercel frontend URL)
 const allowedOrigins = [
   "http://localhost:3000", // Local development
-  "https://mohke-dhage-aknjcw3p1-kirtans-projects-4eedf56b.vercel.app" // Vercel frontend
+  "https://mohke-dhage-aknjcw3p1-kirtans-projects-4eedf56b.vercel.app", // Vercel frontend
+  "https://mohke-dhage-1h3spgwpe-kirtans-projects-4eedf56b.vercel.app",
+  /^https:\/\/mohke-dhage-.*-kirtans-projects-4eedf56b\.vercel\.app$/
 ];
 
 // CORS Middleware
