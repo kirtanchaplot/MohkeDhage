@@ -24,7 +24,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:3000", // Local development
   "http://localhost:5173",
-  "https://mohkedhage.vercel.app/",
+  "https://mohkedhage.vercel.app",
   "https://mohke-dhage-aknjcw3p1-kirtans-projects-4eedf56b.vercel.app", // Old Vercel frontend
   "https://mohke-dhage-1h3spgwpe-kirtans-projects-4eedf56b.vercel.app", // Current Vercel frontend
   /^https:\/\/mohke-dhage-.*-kirtans-projects-4eedf56b\.vercel\.app$/ // Match any Vercel preview URL with this pattern
