@@ -158,7 +158,13 @@ const AdminDashboard = () => {
             </div>
             <p className="mt-4 text-white">Sales</p>
             <h1 className="text-xl font-bold text-white">
-              {isLoading ? <Loader /> : `₹ ${sales.totalSales.toFixed(2)}`}
+              {isLoading ? (
+                <Loader />
+              ) : sales?.totalSales ? (
+                `₹ ${sales.totalSales.toFixed(2)}`
+              ) : (
+                "₹ 0.00"
+              )}
             </h1>
           </div>
           

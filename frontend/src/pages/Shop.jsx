@@ -251,22 +251,23 @@ const Shop = () => {
         
         {/* Products Grid */}
         <div className="flex-1">
-          <h2 className="text-xl font-semibold mb-4 hidden md:block">{products?.length} Products</h2>
-          
-          {products.length === 0 ? (
-            <div className="flex justify-center items-center py-12">
-              <Loader />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              {products?.map((p) => (
-                <div 
-                  className="transform transition-all duration-300 hover:scale-105" 
-                  key={p._id}
-                >
-                  <ProductCard p={p} />
-                </div>
-              ))}
+          <div className="mb-6">
+            <h2 className="text-xl md:text-2xl font-semibold text-white">
+              {products?.length || 0} Products
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {products?.map((p) => (
+              <div key={p._id} className="product-card-animation">
+                <ProductCard p={p} />
+              </div>
+            ))}
+          </div>
+
+          {!products?.length && (
+            <div className="text-center py-8">
+              <p className="text-gray-400 text-lg">No products found matching your criteria</p>
             </div>
           )}
         </div>

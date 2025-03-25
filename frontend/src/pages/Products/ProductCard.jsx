@@ -20,75 +20,61 @@ const ProductCard = ({ p }) => {
   };
 
   return (
-    <div className="w-full h-full bg-[#1A1A1A] rounded-lg shadow overflow-hidden flex flex-col">
-      <section className="relative">
-        <Link to={`/product/${p?._id}`} className="block">
-          <span className="absolute bottom-3 right-3 bg-pink-100 text-pink-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300 z-10">
-            {p?.brand || "Unknown Brand"}
-          </span>
-          <div className="overflow-hidden">
+    <div className="bg-[#1A1A1A] rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
+      <div className="relative group">
+        <Link to={`/product/${p?._id}`}>
+          <div className="aspect-square overflow-hidden">
             <img
-              className="w-full h-40 sm:h-48 md:h-52 object-cover transition-transform duration-300 hover:scale-105"
-              // src={p?.image || "/placeholder-image.jpg"} 
-              src={getImageUrl(p?.image)}   //new1111
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              src={getImageUrl(p?.image)}
               alt={p?.name || "Product Image"}
             />
           </div>
         </Link>
-        <HeartIcon product={p} />
-      </section>
-
-      <div className="p-3 sm:p-4 flex-grow">
-        <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
-          <h5 className="text-base sm:text-lg font-medium text-white line-clamp-1 mb-1 sm:mb-0">
-            {p?.name || "Unnamed Product"}
-          </h5>
-
-          <p className="font-semibold text-pink-500 whitespace-nowrap">
-            {p?.price
-              ? p.price.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "INR",
-                })
-              : "Rs0.00"}
-          </p>
+        
+        <div className="absolute top-2 right-2">
+          <HeartIcon product={p} />
         </div>
+        
+        <div className="absolute bottom-2 right-2">
+          <span className="bg-pink-600 text-white text-xs px-2 py-1 rounded-full">
+            {p?.brand || "MKD"}
+          </span>
+        </div>
+      </div>
 
-        <p className="mb-3 text-sm font-normal text-[#CFCFCF] line-clamp-2">
-          {p?.description?.substring(0, 60) || "No description available"} ...
-        </p>
+      <div className="p-3 flex flex-col flex-grow">
+        <Link to={`/product/${p?._id}`} className="block flex-grow">
+          <h3 className="text-white font-medium text-sm sm:text-base mb-1 line-clamp-1">
+            {p?.name || "Unnamed Product"}
+          </h3>
+          <p className="text-gray-400 text-xs sm:text-sm line-clamp-2 mb-2">
+            {p?.description?.substring(0, 60) || "No description available"} ...
+          </p>
+        </Link>
 
-        <section className="flex justify-between items-center mt-auto">
-          <Link
-            to={`/product/${p?._id}`}
-            className="inline-flex items-center px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm font-medium text-center text-white bg-pink-700 rounded-lg hover:bg-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 dark:bg-pink-600 dark:hover:bg-pink-700 dark:focus:ring-pink-800"
-          >
-            Read More
-            <svg
-              className="w-3 h-3 ml-1 sm:ml-2"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 10"
+        <div className="flex items-center justify-between mt-auto pt-2">
+          <span className="text-pink-500 font-semibold text-sm sm:text-base">
+            ₹{p?.price?.toLocaleString() || "0"}
+          </span>
+          
+          <div className="flex items-center gap-2">
+            <Link
+              to={`/product/${p?._id}`}
+              className="inline-flex items-center text-xs px-3 py-1.5 text-white bg-pink-600 rounded-full hover:bg-pink-700 transition-colors"
             >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M1 5h12m0 0L9 1m4 4L9 9"
-              />
-            </svg>
-          </Link>
-
-          <button
-            className="p-2 rounded-full hover:bg-pink-800/20 transition-colors"
-            onClick={() => addToCartHandler(p, 1)}
-            aria-label="Add to cart"
-          >
-            <AiOutlineShoppingCart size={20} className="text-white" />
-          </button>
-        </section>
+              Read More
+            </Link>
+            
+            <button
+              onClick={() => addToCartHandler(p, 1)}
+              className="p-1.5 rounded-full hover:bg-pink-600/20 transition-colors"
+              aria-label="Add to cart"
+            >
+              <AiOutlineShoppingCart className="text-white w-5 h-5" />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

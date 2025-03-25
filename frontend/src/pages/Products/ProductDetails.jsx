@@ -153,7 +153,7 @@ const ProductDetails = () => {
               <span>Brand: {product.brand}</span>
             </div>
             <div className="flex items-center">
-              <FaStar className="mr-2 text-white" /> 
+              <FaStar className="mr-2 text-pink-500" /> 
               <span>Ratings: {product.rating}</span>
             </div>
             <div className="flex items-center">
@@ -165,7 +165,7 @@ const ProductDetails = () => {
               <span>Quantity: {product.quantity}</span>
             </div>
             <div className="flex items-center">
-              <FaStar className="mr-2 text-white" /> 
+              <FaStar className="mr-2 text-pink-500" /> 
               <span>Reviews: {product.numReviews}</span>
             </div>
             <div className="flex items-center">

@@ -8,21 +8,23 @@ export const orderApiSlice = apiSlice.injectEndpoints({
         url: ORDERS_URL,
         method: "POST",
         body: order,
+        credentials: 'include',
       }),
     }),
 
-    // Add this to your endpoints in orderApiSlice.js
-        createRazorpayOrder: builder.mutation({
-          query: (orderId) => ({
-            url: `${ORDERS_URL}/create-razorpay-order`,
-            method: 'POST',
-             body: { orderId }
-             }),
-                }),
+    createRazorpayOrder: builder.mutation({
+      query: (orderId) => ({
+        url: `${ORDERS_URL}/create-razorpay-order`,
+        method: 'POST',
+        body: { orderId },
+        credentials: 'include',
+      }),
+    }),
 
     getOrderDetails: builder.query({
       query: (id) => ({
         url: `${ORDERS_URL}/${id}`,
+        credentials: 'include',
       }),
     }),
 
@@ -31,6 +33,7 @@ export const orderApiSlice = apiSlice.injectEndpoints({
         url: `${ORDERS_URL}/${orderId}/pay`,
         method: "PUT",
         body: details,
+        credentials: 'include',
       }),
     }),
 
@@ -43,6 +46,7 @@ export const orderApiSlice = apiSlice.injectEndpoints({
     getMyOrders: builder.query({
       query: () => ({
         url: `${ORDERS_URL}/mine`,
+        credentials: 'include',
       }),
       keepUnusedDataFor: 5,
     }),
@@ -50,35 +54,46 @@ export const orderApiSlice = apiSlice.injectEndpoints({
     getOrders: builder.query({
       query: () => ({
         url: ORDERS_URL,
+        credentials: 'include',
       }),
+      keepUnusedDataFor: 5,
     }),
 
     deliverOrder: builder.mutation({
       query: (orderId) => ({
         url: `${ORDERS_URL}/${orderId}/deliver`,
         method: "PUT",
+        credentials: 'include',
       }),
     }),
 
     getTotalOrders: builder.query({
-      query: () => `${ORDERS_URL}/total-orders`,
+      query: () => ({
+        url: `${ORDERS_URL}/total-orders`,
+        credentials: 'include',
+      }),
+      keepUnusedDataFor: 5,
     }),
 
     getTotalSales: builder.query({
-      query: () => `${ORDERS_URL}/total-sales`,
+      query: () => ({
+        url: `${ORDERS_URL}/total-sales`,
+        credentials: 'include',
+      }),
+      keepUnusedDataFor: 5,
     }),
 
     getTotalSalesByDate: builder.query({
-      query: () => `${ORDERS_URL}/total-sales-by-date`,
+      query: () => ({
+        url: `${ORDERS_URL}/total-sales-by-date`,
+        credentials: 'include',
+      }),
+      keepUnusedDataFor: 5,
     }),
   }),
 });
 
 export const {
-  useGetTotalOrdersQuery,
-  useGetTotalSalesQuery,
-  useGetTotalSalesByDateQuery,
-  // ------------------
   useCreateOrderMutation,
   useGetOrderDetailsQuery,
   usePayOrderMutation,
@@ -86,6 +101,8 @@ export const {
   useGetMyOrdersQuery,
   useDeliverOrderMutation,
   useGetOrdersQuery,
-   // existing exports
-   useCreateRazorpayOrderMutation,
+  useCreateRazorpayOrderMutation,
+  useGetTotalOrdersQuery,
+  useGetTotalSalesQuery,
+  useGetTotalSalesByDateQuery,
 } = orderApiSlice;

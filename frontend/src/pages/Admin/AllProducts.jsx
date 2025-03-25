@@ -24,6 +24,14 @@ const AllProducts = () => {
     );
   }
 
+  if (!products) {
+    return (
+      <div className="text-center text-gray-500 p-4">
+        No products found
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col md:flex-row">
       <AdminMenu />
@@ -31,7 +39,7 @@ const AllProducts = () => {
       <div className="w-full px-4 py-4 md:p-6">
         <div className="border-b pb-3 mb-4">
           <h1 className="text-xl font-bold">
-            All Products ({products.length})
+            All Products ({products?.length || 0})
           </h1>
         </div>
         

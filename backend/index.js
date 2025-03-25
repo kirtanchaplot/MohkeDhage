@@ -1,4 +1,4 @@
-// works withh vercel browser not localhost
+
 
 import path from "path";
 import express from "express";
@@ -27,7 +27,7 @@ const allowedOrigins = [
   "https://mohkedhage.vercel.app",
   "https://mohke-dhage-aknjcw3p1-kirtans-projects-4eedf56b.vercel.app", // Old Vercel frontend
   "https://mohke-dhage-1h3spgwpe-kirtans-projects-4eedf56b.vercel.app", // Current Vercel frontend
-  /^https:\/\/mohke-dhage-.*-kirtans-projects-4eedf56b\.vercel\.app$/ // Match any Vercel preview URL with this pattern
+  /^https:\/\/mohke-dhage-.*-kirtans-projects-4eedf56b\.vercel\.app$/, // Match any Vercel preview URL with this pattern
 ];
 
 // CORS Middleware with flexible origin handling

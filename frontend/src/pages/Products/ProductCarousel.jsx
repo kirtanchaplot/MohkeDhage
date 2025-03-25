@@ -47,56 +47,56 @@ const ProductCarousel = () => {
   };
 
   return (
-    <div className="mb-4 w-full px-4 sm:px-0">
-      {isLoading ? null : error ? (
-        <Message variant="danger">
+    <div className="relative">
+      {isLoading ? (
+        <div className="min-h-[400px] flex items-center justify-center">
+          <div className="loader"></div>
+        </div>
+      ) : error ? (
+        <Message variant="error">
           {error?.data?.message || error.error}
         </Message>
       ) : (
-        <Slider
-          {...settings}
-          className="w-full"
-        >
-          {products.map(
-            ({
-              image,
-              _id,
-              name,
-              price,
-              description,
-              brand,
-              createdAt,
-              numReviews,
-              rating,
-              quantity,
-              countInStock,
-            }) => (
-              <div key={_id} className="px-1 sm:px-2">
-                <div className="relative">
-                  <img
-                    // src={image}
-                    src={getImageUrl(image)}//new11
-                    alt={name}
-                    className="w-full rounded-lg object-cover h-48 sm:h-64 md:h-80 lg:h-96"
-                  />
-                </div>
-
-                <div className="mt-4 flex flex-col lg:flex-row justify-between gap-4">
-                  <div className="flex-1">
-                    <h2 className="font-bold text-lg sm:text-xl md:text-2xl">{name}</h2>
-                    <p className="text-lg sm:text-xl md:text-2xl font-bold mt-1 text-pink-500"> ₹ {price}</p>
-                    <p className="mt-2 sm:mt-4 text-sm sm:text-base text-[#B0B0B0] line-clamp-3 md:line-clamp-4">
-                      {description.substring(0, 170)} ...
-                    </p>
+        <Slider {...settings}>
+          {products.map(({
+            _id,
+            name,
+            image,
+            description,
+            brand,
+            createdAt,
+            numReviews,
+            rating,
+            countInStock,
+            quantity,
+            price
+          }) => (
+            <div key={_id} className="relative">
+              <img
+                src={getImageUrl(image)}
+                alt={name}
+                className="w-full h-[400px] object-cover"
+              />
+              
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+                    {name}
+                  </h2>
+                  <p className="text-sm sm:text-base text-gray-200 mb-2 line-clamp-2">
+                    {description}
+                  </p>
+                  <div className="text-xl sm:text-2xl font-bold text-pink-500 mb-2">
+                    ₹{price}
                   </div>
-
+                  
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1 sm:gap-y-2 text-xs sm:text-sm">
                     <h1 className="flex items-center">
                       <FaStore className="mr-2 text-white flex-shrink-0" /> 
                       <span className="truncate">Brand: {brand}</span>
                     </h1>
                     <h1 className="flex items-center">
-                      <FaStar className="mr-2 text-white flex-shrink-0" /> 
+                      <FaStar className="mr-2 text-pink-500 flex-shrink-0" /> 
                       <span className="truncate">Ratings: {Math.round(rating)}</span>
                     </h1>
                     <h1 className="flex items-center">
@@ -108,7 +108,7 @@ const ProductCarousel = () => {
                       <span className="truncate">Quantity: {quantity}</span>
                     </h1>
                     <h1 className="flex items-center">
-                      <FaStar className="mr-2 text-white flex-shrink-0" /> 
+                      <FaStar className="mr-2 text-pink-500 flex-shrink-0" /> 
                       <span className="truncate">Review: {numReviews}</span>
                     </h1>
                     <h1 className="flex items-center">
@@ -118,8 +118,8 @@ const ProductCarousel = () => {
                   </div>
                 </div>
               </div>
-            )
-          )}
+            </div>
+          ))}
         </Slider>
       )}
     </div>

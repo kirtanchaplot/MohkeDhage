@@ -18,23 +18,18 @@ import {
 import { authenticate, authorizeAdmin } from "../middlewares/authMiddleware.js";
 import checkId from "../middlewares/checkId.js";
 
-router
-  .route("/")
-  .get(fetchProducts)
-  .post(authenticate, authorizeAdmin, formidable(), addProduct);
-
-router.route("/allproducts").get(fetchAllProducts);
-router.route("/:id/reviews").post(authenticate, checkId, addProductReview);
-
+// Public routes
+router.get("/", fetchProducts);
 router.get("/top", fetchTopProducts);
 router.get("/new", fetchNewProducts);
+router.get("/allProducts", fetchAllProducts);
+router.get("/:id", fetchProductById);
+router.post("/filtered-products", filterProducts);
 
-router
-  .route("/:id")
-  .get(fetchProductById)
-  .put(authenticate, authorizeAdmin, formidable(), updateProductDetails)
-  .delete(authenticate, authorizeAdmin, removeProduct);
-
-router.route("/filtered-products").post(filterProducts);
+// Protected routes
+router.post("/", authenticate, authorizeAdmin, formidable(), addProduct);
+router.put("/:id", authenticate, authorizeAdmin, formidable(), updateProductDetails);
+router.delete("/:id", authenticate, authorizeAdmin, removeProduct);
+router.post("/:id/reviews", authenticate, addProductReview);
 
 export default router;

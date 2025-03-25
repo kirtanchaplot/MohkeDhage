@@ -36,9 +36,6 @@ const createUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  console.log(email);
-  console.log(password);
-
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
@@ -48,22 +45,33 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 
     if (isPasswordValid) {
-      createToken(res, existingUser._id);
+      // Create token and set cookie
+      const token = createToken(res, existingUser._id);
 
-      res.status(201).json({
+      // Log for debugging
+      console.log('Login successful:', {
+        userId: existingUser._id,
+        email: existingUser.email
+      });
+
+      // Send response with user info and token
+      res.status(200).json({
         _id: existingUser._id,
         username: existingUser.username,
         email: existingUser.email,
         isAdmin: existingUser.isAdmin,
+        token: token
       });
       return;
     }
   }
+
+  res.status(401).json({ message: "Invalid email or password" });
 });
 
 const logoutCurrentUser = asyncHandler(async (req, res) => {
   res.cookie("jwt", "", {
-    httyOnly: true,
+    httpOnly: true,
     expires: new Date(0),
   });
 
