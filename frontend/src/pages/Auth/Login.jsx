@@ -9,8 +9,9 @@ import { setCredentials } from "../../redux/features/auth/authSlice";
 import { toast } from "react-toastify";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [emailOrMobile, setEmailOrMobile] = useState("");
   const [password, setPassword] = useState("");
+  const [loginMethod, setLoginMethod] = useState("email"); // Track whether user is entering email or mobile
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -29,12 +30,37 @@ const Login = () => {
     }
   }, [navigate, redirect, userInfo]);
 
+  // Detect input type (email or mobile)
+  const handleIdentifierChange = (e) => {
+    const value = e.target.value;
+    setEmailOrMobile(value);
+    
+    // Update login method based on input format
+    if (value.includes('@')) {
+      setLoginMethod('email');
+    } else if (/^\d+$/.test(value)) {
+      setLoginMethod('mobile');
+    }
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
+    
+    // Basic validation
+    if (!emailOrMobile) {
+      toast.error("Please enter your email or mobile number");
+      return;
+    }
+    
+    if (!password) {
+      toast.error("Please enter your password");
+      return;
+    }
+    
     try {
-      const res = await login({ email, password }).unwrap();
+      const res = await login({ emailOrMobile, password }).unwrap();
       console.log(res);
-      dispatch(setCredentials({ ...res,token: res.token || res._id  }));
+      dispatch(setCredentials({ ...res, token: res.token || res._id }));
       navigate(redirect);
     } catch (err) {
       toast.error(err?.data?.message || err.error);
@@ -52,18 +78,18 @@ const Login = () => {
           <form onSubmit={submitHandler} className="space-y-6">
             <div>
               <label
-                htmlFor="email"
+                htmlFor="emailOrMobile"
                 className="block text-sm font-medium text-gray-300 mb-2"
               >
-                Email Address
+                Email Address or Mobile Number
               </label>
               <input
-                type="email"
-                id="email"
+                type={loginMethod === 'email' ? "email" : "tel"}
+                id="emailOrMobile"
                 className="w-full px-4 py-3 border border-gray-600 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 transition duration-200"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email or mobile number"
+                value={emailOrMobile}
+                onChange={handleIdentifierChange}
                 required
               />
             </div>

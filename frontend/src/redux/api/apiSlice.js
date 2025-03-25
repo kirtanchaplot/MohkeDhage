@@ -18,11 +18,13 @@ const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
   credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
-    const token = getState().auth.userInfo?.token;
+    const token = localStorage.getItem('userToken') || getState().auth.userInfo?.token;
     
     if (token) {
       headers.set('Authorization', `Bearer ${token}`);
     }
+    
+    // Don't set CORS headers manually, they are set by the browser
     
     return headers;
   }
@@ -31,9 +33,9 @@ const baseQuery = fetchBaseQuery({
 // Add request/response logging
 const baseQueryWithLogging = async (args, api, extraOptions) => {
   console.log('Making request:', {
-    url: args.url,
+    url: typeof args === 'string' ? args : args.url,
     method: args.method,
-    headers: args.headers,
+    body: args.body,
   });
 
   const result = await baseQuery(args, api, extraOptions);
@@ -42,6 +44,12 @@ const baseQueryWithLogging = async (args, api, extraOptions) => {
     console.error('Request failed:', {
       status: result.error.status,
       data: result.error.data,
+      url: typeof args === 'string' ? args : args.url,
+    });
+  } else {
+    console.log('Request successful:', {
+      url: typeof args === 'string' ? args : args.url,
+      result: result.data,
     });
   }
 
@@ -51,5 +59,5 @@ const baseQueryWithLogging = async (args, api, extraOptions) => {
 export const apiSlice = createApi({
   baseQuery: baseQueryWithLogging,
   tagTypes: ["Product", "Order", "User", "Category"],
-  endpoints: (builder) => ({}),
+  endpoints: () => ({}),
 });

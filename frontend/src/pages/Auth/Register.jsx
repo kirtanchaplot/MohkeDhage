@@ -10,10 +10,17 @@ import { toast } from "react-toastify";
 const Register = () => {
   const [username, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  
+  // Validation states
+  const [passwordError, setPasswordError] = useState("");
+  const [mobileError, setMobileError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [contactMethodError, setContactMethodError] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -32,21 +39,124 @@ const Register = () => {
     }
   }, [navigate, redirect, userInfo]);
 
+  // Validate contact methods
+  const validateContactMethods = () => {
+    if (!email && !mobile) {
+      setContactMethodError("Either email or mobile number is required");
+      return false;
+    }
+    setContactMethodError("");
+    return true;
+  };
+
+  // Password validation function
+  const validatePassword = (value) => {
+    if (value.length < 7) {
+      return "Password must be at least 7 characters long";
+    }
+    if (!/[A-Za-z]/.test(value) || !/[0-9]/.test(value)) {
+      return "Password must contain both letters and numbers";
+    }
+    return "";
+  };
+
+  // Email validation function
+  const validateEmail = (value) => {
+    if (!value) {
+      // Email is optional if mobile is provided
+      if (mobile) return "";
+      return "Email is required if mobile is not provided";
+    }
+    
+    // Basic email format validation
+    if (!/\S+@\S+\.\S+/.test(value)) {
+      return "Please enter a valid email address";
+    }
+    return "";
+  };
+
+  // Mobile validation function
+  const validateMobile = (value) => {
+    if (!value) {
+      // Mobile is optional if email is provided
+      if (email) return "";
+      return "Mobile number is required if email is not provided";
+    }
+    
+    if (value.length !== 10) {
+      return "Mobile number must be exactly 10 digits";
+    }
+    if (!/^\d+$/.test(value)) {
+      return "Mobile number must contain only digits";
+    }
+    return "";
+  };
+
+  // Handle password change
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    setPasswordError(validatePassword(value));
+  };
+
+  // Handle email change
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    setEmailError(validateEmail(value));
+    // Update contact method validation
+    if (value || mobile) {
+      setContactMethodError("");
+    }
+  };
+
+  // Handle mobile change
+  const handleMobileChange = (e) => {
+    const value = e.target.value;
+    setMobile(value);
+    setMobileError(validateMobile(value));
+    // Update contact method validation
+    if (value || email) {
+      setContactMethodError("");
+    }
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
 
+    // Validate fields before submission
+    const passError = validatePassword(password);
+    const emailErr = validateEmail(email);
+    const mobError = validateMobile(mobile);
+    const contactValid = validateContactMethods();
+    
+    setPasswordError(passError);
+    setEmailError(emailErr);
+    setMobileError(mobError);
+
+    if (passError || emailErr || mobError || !contactValid) {
+      toast.error("Please fix the errors in the form");
+      return;
+    }
+
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
-    } else {
-      try {
-        const res = await register({ username, email, password }).unwrap();
-        dispatch(setCredentials({ ...res }));
-        navigate(redirect);
-        toast.success("User successfully registered");
-      } catch (err) {
-        console.log(err);
-        toast.error(err?.data?.message || "Registration failed");
-      }
+      return;
+    }
+
+    try {
+      const res = await register({ 
+        username, 
+        email: email || undefined, 
+        mobile: mobile || undefined,
+        password 
+      }).unwrap();
+      dispatch(setCredentials({ ...res }));
+      navigate(redirect);
+      toast.success("User successfully registered");
+    } catch (err) {
+      console.log(err);
+      toast.error(err?.data?.message || "Registration failed");
     }
   };
 
@@ -70,6 +180,12 @@ const Register = () => {
           
           <div className="bg-gray-800/80 backdrop-blur-sm p-6 sm:p-8 rounded-xl shadow-xl border border-gray-700">
             <h1 className="text-2xl font-bold mb-6 text-white text-center">Create Account</h1>
+
+            {contactMethodError && (
+              <div className="mb-4 p-3 bg-red-500/20 border border-red-500 rounded-lg">
+                <p className="text-sm text-red-400">{contactMethodError}</p>
+              </div>
+            )}
 
             <form onSubmit={submitHandler} className="space-y-4">
               <div>
@@ -95,17 +211,46 @@ const Register = () => {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-300 mb-1"
                 >
-                  Email Address
+                  Email Address {!mobile && <span className="text-red-400">*</span>}
                 </label>
                 <input
                   type="email"
                   id="email"
-                  className="w-full px-4 py-3 border border-gray-600 rounded-lg bg-gray-700/70 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
+                  className={`w-full px-4 py-3 border rounded-lg bg-gray-700/70 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all ${
+                    emailError ? "border-red-500" : "border-gray-600"
+                  }`}
                   placeholder="Enter your email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                  onChange={handleEmailChange}
+                  required={!mobile}
                 />
+                {emailError && (
+                  <p className="mt-1 text-xs text-red-400">{emailError}</p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="mobile"
+                  className="block text-sm font-medium text-gray-300 mb-1"
+                >
+                  Mobile Number {!email && <span className="text-red-400">*</span>}
+                </label>
+                <input
+                  type="tel"
+                  id="mobile"
+                  className={`w-full px-4 py-3 border rounded-lg bg-gray-700/70 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all ${
+                    mobileError ? "border-red-500" : "border-gray-600"
+                  }`}
+                  placeholder="Enter 10-digit mobile number"
+                  value={mobile}
+                  onChange={handleMobileChange}
+                  maxLength={10}
+                  required={!email}
+                />
+                {mobileError && (
+                  <p className="mt-1 text-xs text-red-400">{mobileError}</p>
+                )}
               </div>
 
               <div>
@@ -119,10 +264,12 @@ const Register = () => {
                   <input
                     type={passwordVisible ? "text" : "password"}
                     id="password"
-                    className="w-full px-4 py-3 border border-gray-600 rounded-lg bg-gray-700/70 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all"
-                    placeholder="Create a password"
+                    className={`w-full px-4 py-3 border rounded-lg bg-gray-700/70 text-white focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent transition-all ${
+                      passwordError ? "border-red-500" : "border-gray-600"
+                    }`}
+                    placeholder="Create a password (7+ chars, letters & numbers)"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     required
                   />
                   <button
@@ -133,6 +280,9 @@ const Register = () => {
                     {passwordVisible ? "Hide" : "Show"}
                   </button>
                 </div>
+                {passwordError && (
+                  <p className="mt-1 text-xs text-red-400">{passwordError}</p>
+                )}
               </div>
 
               <div>

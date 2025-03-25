@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   AiOutlineHome,
   AiOutlineShopping,
@@ -23,6 +23,8 @@ const Navigation = () => {
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const dropdownRef = useRef(null);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
@@ -55,6 +57,25 @@ const Navigation = () => {
       console.error(error);
     }
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Close dropdown when navigating to a different page
+  useEffect(() => {
+    return () => setDropdownOpen(false);
+  }, []);
 
   // Desktop Navigation
   const DesktopNav = () => (
@@ -110,48 +131,49 @@ const Navigation = () => {
         </Link>
       </div>
 
-      <div className="relative">
+      <div className="relative" ref={dropdownRef}>
         <button
           onClick={toggleDropdown}
-          className="flex items-center text-gray-800 focus:outline-none"
+          className="flex items-center text-white focus:outline-none px-2 py-1 rounded hover:bg-gray-800 transition-colors"
         >
           {userInfo ? (
-            <span className="text-white">{userInfo.username}</span>
+            <span className="text-white flex items-center">
+              <span className="mr-1">{userInfo.username}</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className={`h-4 w-4 ml-1 transition-transform ${
+                  dropdownOpen ? "transform rotate-180" : ""
+                }`}
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="white"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d={dropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+                />
+              </svg>
+            </span>
           ) : (
             <></>
-          )}
-          {userInfo && (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className={`h-4 w-4 ml-1 ${
-                dropdownOpen ? "transform rotate-180" : ""
-              }`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="white"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d={dropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
-              />
-            </svg>
           )}
         </button>
 
         {dropdownOpen && userInfo && (
           <ul
-            className={`absolute right-0 mt-2 mr-14 space-y-2 bg-white text-gray-600 ${
-              !userInfo.isAdmin ? "-top-20" : "-top-80"
-            } z-[60]`}
+            className={`absolute dropdown-menu show mt-2 space-y-2 bg-white text-gray-600 rounded shadow-lg ${
+              !userInfo.isAdmin ? "top-full" : "bottom-full"
+            } right-0 z-[60] w-40 md:w-48 overflow-hidden`}
           >
             {userInfo.isAdmin && (
               <>
                 <li>
                   <Link
                     to="/admin/dashboard"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    className="block px-4 py-2 hover:bg-gray-100 whitespace-nowrap"
+                    onClick={() => setDropdownOpen(false)}
                   >
                     Dashboard
                   </Link>
@@ -159,7 +181,8 @@ const Navigation = () => {
                 <li>
                   <Link
                     to="/admin/productlist"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    className="block px-4 py-2 hover:bg-gray-100 whitespace-nowrap"
+                    onClick={() => setDropdownOpen(false)}
                   >
                     Products
                   </Link>
@@ -167,7 +190,8 @@ const Navigation = () => {
                 <li>
                   <Link
                     to="/admin/categorylist"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    className="block px-4 py-2 hover:bg-gray-100 whitespace-nowrap"
+                    onClick={() => setDropdownOpen(false)}
                   >
                     Category
                   </Link>
@@ -175,7 +199,8 @@ const Navigation = () => {
                 <li>
                   <Link
                     to="/admin/orderlist"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    className="block px-4 py-2 hover:bg-gray-100 whitespace-nowrap"
+                    onClick={() => setDropdownOpen(false)}
                   >
                     Orders
                   </Link>
@@ -183,7 +208,8 @@ const Navigation = () => {
                 <li>
                   <Link
                     to="/admin/userlist"
-                    className="block px-4 py-2 hover:bg-gray-100"
+                    className="block px-4 py-2 hover:bg-gray-100 whitespace-nowrap"
+                    onClick={() => setDropdownOpen(false)}
                   >
                     Users
                   </Link>
@@ -192,14 +218,21 @@ const Navigation = () => {
             )}
 
             <li>
-              <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">
+              <Link 
+                to="/profile" 
+                className="block px-4 py-2 hover:bg-gray-100 whitespace-nowrap"
+                onClick={() => setDropdownOpen(false)}
+              >
                 Profile
               </Link>
             </li>
             <li>
               <button
-                onClick={logoutHandler}
-                className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                onClick={() => {
+                  setDropdownOpen(false);
+                  logoutHandler();
+                }}
+                className="block w-full px-4 py-2 text-left hover:bg-gray-100 whitespace-nowrap"
               >
                 Logout
               </button>
@@ -312,7 +345,11 @@ const Navigation = () => {
                   </div>
                 )}
                 <div className="flex flex-col items-center space-y-4 mt-4 border-t border-gray-700 pt-4 w-full">
-                  <Link to="/profile" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                  <Link 
+                    to="/profile" 
+                    className="w-full text-center py-2 hover:bg-gray-100 whitespace-nowrap"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     Profile
                   </Link>
                   <button onClick={logoutHandler} className="w-full text-center py-2 text-pink-500">

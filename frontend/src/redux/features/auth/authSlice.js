@@ -15,14 +15,22 @@ const authSlice = createSlice({
       localStorage.setItem("userInfo", JSON.stringify(action.payload));
 
       // Explicitly store the token
-      localStorage.setItem("userToken", action.payload.token);
+      if (action.payload?.token) {
+        localStorage.setItem("userToken", action.payload.token);
+        console.log("Token stored:", action.payload.token);
+      }
 
       const expirationTime = new Date().getTime() + 30 * 24 * 60 * 60 * 1000; // 30 days
       localStorage.setItem("expirationTime", expirationTime);
     },
     logout: (state) => {
       state.userInfo = null;
-      localStorage.clear();
+      // Clear all localStorage items
+      localStorage.removeItem("userInfo");
+      localStorage.removeItem("userToken");
+      localStorage.removeItem("expirationTime");
+      // Also clear any cookies by setting their expiration to the past
+      document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     },
   },
 });

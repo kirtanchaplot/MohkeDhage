@@ -9,8 +9,21 @@ const userSchema = mongoose.Schema(
 
     email: {
       type: String,
-      required: true,
+      sparse: true,
       unique: true,
+    },
+
+    mobile: {
+      type: String,
+      sparse: true,
+      unique: true,
+      validate: {
+        validator: function(v) {
+          if (!v) return true;
+          return /^\d{10}$/.test(v);
+        },
+        message: props => `${props.value} is not a valid 10-digit mobile number!`
+      }
     },
 
     password: {
@@ -26,6 +39,14 @@ const userSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
+
+userSchema.pre('save', function(next) {
+  if (this.email || this.mobile) {
+    next();
+  } else {
+    next(new Error('Either email or mobile number is required'));
+  }
+});
 
 const User = mongoose.model("User", userSchema);
 

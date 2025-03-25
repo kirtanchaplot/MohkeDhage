@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -27,6 +26,16 @@ const PlaceOrder = () => {
 
   const placeOrderHandler = async () => {
     try {
+      // Check if user is logged in first
+      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      if (!userInfo) {
+        toast.error("Please log in to place an order");
+        navigate('/login?redirect=/placeorder');
+        return;
+      }
+
+      toast.info("Processing your order...");
+      
       const res = await createOrder({
         orderItems: cart.cartItems,
         shippingAddress: cart.shippingAddress,
@@ -36,10 +45,24 @@ const PlaceOrder = () => {
         taxPrice: cart.taxPrice,
         totalPrice: cart.totalPrice,
       }).unwrap();
+      
       dispatch(clearCartItems());
+      toast.success("Order placed successfully!");
       navigate(`/order/${res._id}`);
     } catch (error) {
-      toast.error(error);
+      console.error("Place order error:", error);
+      
+      // Handle different error scenarios
+      if (error.status === 401) {
+        toast.error("Session expired. Please log in again");
+        navigate('/login?redirect=/placeorder');
+      } else if (error.status === 403) {
+        toast.error("You don't have permission to place an order");
+      } else if (error.status === 400) {
+        toast.error(error?.data?.message || "Invalid order data");
+      } else {
+        toast.error(error?.data?.message || error.message || "Failed to place order. Please try again");
+      }
     }
   };
 
@@ -137,7 +160,11 @@ const PlaceOrder = () => {
                 </div>
               </div>
 
-              {error && <Message variant="danger" className="mt-4">{error.data.message}</Message>}
+              {error && (
+                <Message variant="danger" className="mt-4">
+                  {error.data?.message || error.message || 'An error occurred'}
+                </Message>
+              )}
 
               <button
                 type="button"

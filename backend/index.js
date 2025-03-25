@@ -1,5 +1,3 @@
-
-
 import path from "path";
 import express from "express";
 import dotenv from "dotenv";
@@ -47,13 +45,24 @@ app.use(
       if (allowed) {
         callback(null, true);
       } else {
+        console.log('CORS blocked request from:', origin);
         callback(new Error('Not allowed by CORS'));
       }
     },
     
     credentials: true,
-    methods: "GET, POST, PUT, DELETE, OPTIONS",
-    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"]
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+    allowedHeaders: [
+      "Origin", 
+      "X-Requested-With", 
+      "Content-Type", 
+      "Accept", 
+      "Authorization", 
+      "X-Access-Token", 
+      "X-Key", 
+      "X-Auth-Token"
+    ],
+    exposedHeaders: ["Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"]
   })
 );
 

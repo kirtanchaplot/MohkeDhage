@@ -40,6 +40,7 @@ export const orderApiSlice = apiSlice.injectEndpoints({
     getRazorpayClientId: builder.query({
       query: () => ({
         url: RAZORPAY_URL,
+        credentials: 'include',
       }),
     }),
 

@@ -45,6 +45,33 @@
   transition: opacity 0.3s ease-in-out; /* Add opacity transition */
 }
 
+/* Dropdown Menu Styling */
+#navigation-container .dropdown-menu {
+  width: 200px;
+  max-width: 90vw;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  margin-top: 5px;
+}
+
+#navigation-container .dropdown-menu.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* Make sure links in dropdown are properly visible */
+#navigation-container .dropdown-menu li a,
+#navigation-container .dropdown-menu li button {
+  color: #333;
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
 /* Mobile Navigation */
 @media (max-width: 768px) {
   .mobile-menu {
@@ -63,5 +90,34 @@
   /* Reset main content margin on mobile */
   #main-content {
     margin-left: 0 !important;
+  }
+
+  #navigation-container .dropdown-menu {
+    right: 0;
+    left: auto;
+  }
+}
+
+/* Responsive positioning for dropdown */
+@media (max-width: 640px) {
+  #navigation-container .dropdown-menu {
+    position: fixed;
+    top: auto;
+    bottom: auto; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80vw;
+    max-width: 300px;
+    margin-top: 5px;
+    right: auto;
+    z-index: 100;
+  }
+  
+  /* Ensure the dropdown is completely invisible when not active */
+  .dropdown-menu:not(.show) {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 }
