@@ -22,7 +22,6 @@ const Navigation = () => {
   const { cartItems } = useSelector((state) => state.cart);
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -31,6 +30,14 @@ const Navigation = () => {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  // Add event listeners for sidebar hover
+  const handleSidebarHover = (isHovering) => {
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.style.marginLeft = isHovering ? '15%' : '4%';
+    }
   };
 
   const dispatch = useDispatch();
@@ -52,9 +59,11 @@ const Navigation = () => {
   // Desktop Navigation
   const DesktopNav = () => (
     <div
-      style={{ zIndex: 9999 }}
+      style={{ zIndex: 50 }}
       className="hidden md:flex flex-col justify-between p-4 text-white bg-[#100f0f] w-[4%] hover:w-[15%] h-[100vh] fixed"
       id="navigation-container"
+      onMouseEnter={() => handleSidebarHover(true)}
+      onMouseLeave={() => handleSidebarHover(false)}
     >
       <div className="flex flex-col justify-center space-y-4">
         <Link
@@ -135,7 +144,7 @@ const Navigation = () => {
           <ul
             className={`absolute right-0 mt-2 mr-14 space-y-2 bg-white text-gray-600 ${
               !userInfo.isAdmin ? "-top-20" : "-top-80"
-            } `}
+            } z-[60]`}
           >
             {userInfo.isAdmin && (
               <>

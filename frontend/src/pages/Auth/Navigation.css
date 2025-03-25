@@ -3,18 +3,25 @@
 /* Desktop Navigation */
 #navigation-container {
   width: 4%;
-  transition: width 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
   overflow: hidden; /* Hide overflowing content during transition */
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  height: 100vh;
 }
 
 #navigation-container:hover {
   width: 15%;
+  z-index: 50;
 }
 
 /* Initially hide nav-item-name */
 .nav-item-name {
   display: none;
-  transition: opacity 0.2s ease-in-out; /* Add opacity transition */
+  transition: opacity 0.3s ease-in-out; /* Add opacity transition */
+  white-space: nowrap;
 }
 
 #navigation-container:hover .nav-item-name {
@@ -25,7 +32,7 @@
 .search-input {
   display: none;
   opacity: 0;
-  transition: opacity 0.2s ease-in-out; /* Add opacity transition */
+  transition: opacity 0.3s ease-in-out; /* Add opacity transition */
 }
 
 #navigation-container:hover .search-input {
@@ -35,13 +42,14 @@
 
 #navigation-container:hover .search-icon {
   display: none;
-  transition: opacity 0.2s ease-in-out; /* Add opacity transition */
+  transition: opacity 0.3s ease-in-out; /* Add opacity transition */
 }
 
 /* Mobile Navigation */
 @media (max-width: 768px) {
   .mobile-menu {
     transition: transform 0.3s ease-in-out;
+    z-index: 50;
   }
   
   .mobile-menu.open {
@@ -50,5 +58,10 @@
   
   .mobile-menu.closed {
     transform: translateX(-100%);
+  }
+
+  /* Reset main content margin on mobile */
+  #main-content {
+    margin-left: 0 !important;
   }
 }
