@@ -39,14 +39,6 @@ const Product = ({ product }) => {
               <h2 className="text-white text-sm sm:text-base font-medium line-clamp-2">
                 {product.name}
               </h2>
-              <div className="flex items-center justify-between mt-1">
-                <div className="text-gray-200 text-xs">
-                  Brand: {product.brand || 'MKD'}
-                </div>
-                <div className="text-gray-200 text-xs">
-                  Stock: {product.countInStock}
-                </div>
-              </div>
             </Link>
           </div>
         </div>
