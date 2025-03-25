@@ -48,9 +48,6 @@ const ProductCard = ({ p }) => {
           <h3 className="text-white font-medium text-sm sm:text-base mb-1 line-clamp-1">
             {p?.name || "Unnamed Product"}
           </h3>
-          <p className="text-gray-400 text-xs sm:text-sm line-clamp-2 mb-2">
-            {p?.description?.substring(0, 60) || "No description available"} ...
-          </p>
         </Link>
 
         <div className="flex items-center justify-between mt-auto pt-2">
