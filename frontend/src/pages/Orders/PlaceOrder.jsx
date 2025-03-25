@@ -13,6 +13,7 @@ const PlaceOrder = () => {
   const navigate = useNavigate();
 
   const cart = useSelector((state) => state.cart);
+  const { userInfo } = useSelector((state) => state.auth);
 
   const [createOrder, { isLoading, error }] = useCreateOrderMutation();
 
@@ -26,15 +27,32 @@ const PlaceOrder = () => {
 
   const placeOrderHandler = async () => {
     try {
-      // Check if user is logged in first
-      const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+      // First, verify authentication
       if (!userInfo) {
-        toast.error("Please log in to place an order");
+        toast.error("Your session has expired. Please log in again.");
+        navigate('/login?redirect=/placeorder');
+        return;
+      }
+
+      // Check if token exists
+      const token = localStorage.getItem('userToken') || userInfo.token;
+      if (!token) {
+        console.error("No authentication token found");
+        toast.error("Authentication issue. Please log in again.");
         navigate('/login?redirect=/placeorder');
         return;
       }
 
       toast.info("Processing your order...");
+      
+      // Log request details for debugging
+      console.log("Placing order with data:", {
+        items: cart.cartItems.length,
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+        totalPrice: cart.totalPrice,
+        auth: !!token
+      });
       
       const res = await createOrder({
         orderItems: cart.cartItems,
@@ -52,8 +70,9 @@ const PlaceOrder = () => {
     } catch (error) {
       console.error("Place order error:", error);
       
-      // Handle different error scenarios
+      // Handle different error scenarios with detailed logging
       if (error.status === 401) {
+        console.log("Authentication failed:", error);
         toast.error("Session expired. Please log in again");
         navigate('/login?redirect=/placeorder');
       } else if (error.status === 403) {
@@ -91,9 +110,7 @@ const PlaceOrder = () => {
                   <tr key={index} className="border-b border-gray-700">
                     <td className="p-2">
                       <img
-                        // src={item.image}
                         src={getImageUrl(item.image)}
-
                         alt={item.name}
                         className="w-16 h-16 object-cover rounded"
                       />

@@ -18,13 +18,21 @@ const baseQuery = fetchBaseQuery({
   baseUrl: BASE_URL,
   credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
-    const token = localStorage.getItem('userToken') || getState().auth.userInfo?.token;
+    // Try to get token from multiple sources to ensure maximum compatibility
+    const token = 
+      localStorage.getItem('userToken') || 
+      getState().auth.userInfo?.token ||
+      getState().auth.userInfo?._id;  // Fallback for older tokens
     
     if (token) {
+      console.log("Setting Authorization header with token");
       headers.set('Authorization', `Bearer ${token}`);
+    } else {
+      console.log("No token available for API request");
     }
     
-    // Don't set CORS headers manually, they are set by the browser
+    // Add content type for all requests
+    headers.set('Content-Type', 'application/json');
     
     return headers;
   }
@@ -32,28 +40,36 @@ const baseQuery = fetchBaseQuery({
 
 // Add request/response logging
 const baseQueryWithLogging = async (args, api, extraOptions) => {
+  const url = typeof args === 'string' ? args : args.url;
+  
   console.log('Making request:', {
-    url: typeof args === 'string' ? args : args.url,
+    url,
     method: args.method,
-    body: args.body,
+    body: args.body ? JSON.stringify(args.body).substring(0, 200) + '...' : undefined, // Truncate for readability
   });
 
-  const result = await baseQuery(args, api, extraOptions);
+  try {
+    const result = await baseQuery(args, api, extraOptions);
 
-  if (result.error) {
-    console.error('Request failed:', {
-      status: result.error.status,
-      data: result.error.data,
-      url: typeof args === 'string' ? args : args.url,
-    });
-  } else {
-    console.log('Request successful:', {
-      url: typeof args === 'string' ? args : args.url,
-      result: result.data,
-    });
+    if (result.error) {
+      console.error('Request failed:', {
+        url,
+        status: result.error.status,
+        data: result.error.data,
+        headers: result.meta?.response?.headers ? Object.fromEntries(result.meta.response.headers) : {},
+      });
+    } else {
+      console.log('Request successful:', {
+        url,
+        result: result.data ? (typeof result.data === 'object' ? 'data received' : result.data) : 'no data',
+      });
+    }
+
+    return result;
+  } catch (err) {
+    console.error('API call exception:', err);
+    return { error: { status: 'FETCH_ERROR', error: err.message } };
   }
-
-  return result;
 };
 
 export const apiSlice = createApi({
