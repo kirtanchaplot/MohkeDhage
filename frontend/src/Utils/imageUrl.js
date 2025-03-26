@@ -9,16 +9,19 @@ const getImageUrl = (imagePath) => {
     // Get the API URL from environment variables
     const apiUrl = import.meta.env.VITE_API_URL || 'https://mohkedhage.onrender.com';
     
-    // Clean the image path
-    const cleanPath = imagePath.replace(/\\/g, '/');
+    // Clean the image path and remove any double slashes
+    const cleanPath = imagePath.replace(/\\/g, '/').replace(/\/+/g, '/');
     
-    // Handle both /uploads/image.jpg and uploads/image.jpg formats
-    const formattedPath = cleanPath.startsWith('/') ? cleanPath : `/${cleanPath}`;
+    // Remove 'uploads' from the path if it exists since we'll add it back
+    const pathWithoutUploads = cleanPath.replace(/^uploads\/|^\/uploads\//, '');
     
-    // Ensure we're using the correct path for uploads
-    const uploadPath = formattedPath.includes('uploads/') ? formattedPath : `/uploads${formattedPath}`;
+    // Construct the final URL
+    const finalPath = `/uploads/${pathWithoutUploads}`;
     
-    return `${apiUrl}${uploadPath}`;
+    // Ensure there are no double slashes in the final URL
+    const finalUrl = `${apiUrl}${finalPath}`.replace(/([^:]\/)\/+/g, '$1');
+    
+    return finalUrl;
 };
   
 export default getImageUrl;
