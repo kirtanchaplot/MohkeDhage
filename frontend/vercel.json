@@ -48,7 +48,16 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "images": {
-    "domains": ["mohkedhage.vercel.app"],
-    "minimumCacheTTL": 86400
+    "domains": ["mohkedhage.onrender.com"],
+    "sizes": [16, 32, 48, 64, 96, 128, 256, 384],
+    "minimumCacheTTL": 86400,
+    "formats": ["image/webp"],
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "mohkedhage.onrender.com",
+        "pathname": "/uploads/**"
+      }
+    ]
   }
 } 
