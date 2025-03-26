@@ -9,17 +9,17 @@ const Header = () => {
   return (
     <div className="bg-gray-900">
       <div className="container mx-auto">
-        <div className="flex flex-col lg:flex-row lg:min-h-[600px]">
+        <div className="flex flex-col lg:flex-row lg:items-stretch lg:gap-6 lg:py-6">
           {/* Main Carousel Section */}
-          <div className="w-full lg:w-8/12 h-[300px] lg:h-auto">
-            <div className="h-full">
+          <div className="w-full lg:w-8/12">
+            <div className="bg-gray-800/30 backdrop-blur rounded-xl overflow-hidden h-full">
               <ProductCarousel />
             </div>
           </div>
 
           {/* Top Products Section */}
-          <div className="w-full lg:w-4/12 p-3 lg:p-6">
-            <div className="bg-gray-800/50 backdrop-blur rounded-xl">
+          <div className="w-full lg:w-4/12 p-3 lg:p-0">
+            <div className="bg-gray-800/50 backdrop-blur rounded-xl h-full flex flex-col">
               <div className="p-4 border-b border-gray-700">
                 <h2 className="text-xl font-bold text-white flex items-center">
                   <svg className="w-5 h-5 text-pink-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -29,7 +29,7 @@ const Header = () => {
                 </h2>
               </div>
 
-              <div className="p-3">
+              <div className="flex-1 p-3">
                 {isLoading ? (
                   <div className="flex justify-center py-8">
                     <Loader />
@@ -39,10 +39,12 @@ const Header = () => {
                     {error?.data?.message || error.error}
                   </div>
                 ) : (
-                  <div className="space-y-3 max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent pr-2">
-                    {data?.map((product) => (
-                      <SmallProduct key={product._id} product={product} />
-                    ))}
+                  <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-transparent pr-2">
+                    <div className="space-y-3">
+                      {data?.map((product) => (
+                        <SmallProduct key={product._id} product={product} />
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
