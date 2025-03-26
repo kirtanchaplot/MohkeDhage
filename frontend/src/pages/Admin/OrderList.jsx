@@ -1,12 +1,60 @@
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
 import { Link } from "react-router-dom";
-import { useGetOrdersQuery } from "../../redux/api/orderApiSlice";
+import { useGetOrdersQuery, usePayOrderMutation, useDeliverOrderMutation } from "../../redux/api/orderApiSlice";
 import AdminMenu from "./AdminMenu";
-import getImageUrl from "../../Utils/imageUrl";
+import { toast } from "react-toastify";
 
 const OrderList = () => {
-  const { data: orders, isLoading, error } = useGetOrdersQuery();
+  const { data: orders, isLoading, error, refetch } = useGetOrdersQuery();
+  const [payOrder] = usePayOrderMutation();
+  const [deliverOrder] = useDeliverOrderMutation();
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return '/placeholder.jpg';
+    
+    // If the image path is already a full URL, return it
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return imagePath;
+    }
+    
+    // If the image path starts with a slash, remove it
+    if (imagePath.startsWith('/')) {
+      imagePath = imagePath.substring(1);
+    }
+    
+    // Construct the full URL using the backend URL from environment variables
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || '';
+    return `${backendUrl}/${imagePath}`;
+  };
+
+  const updateOrderPayment = async (orderId) => {
+    try {
+      await payOrder({ 
+        orderId, 
+        details: {
+          id: Date.now(),
+          status: "COMPLETED",
+          update_time: new Date().toISOString(),
+          payer: {}
+        }
+      });
+      refetch();
+      toast.success("Order marked as paid");
+    } catch (err) {
+      toast.error(err?.data?.message || err.message);
+    }
+  };
+
+  const updateOrderDelivery = async (orderId) => {
+    try {
+      await deliverOrder(orderId);
+      refetch();
+      toast.success("Order marked as delivered");
+    } catch (err) {
+      toast.error(err?.data?.message || err.message);
+    }
+  };
 
   return (
     <div className="flex flex-col md:flex-row">
@@ -41,7 +89,7 @@ const OrderList = () => {
                     <th className="text-left p-3 border-b">TOTAL</th>
                     <th className="text-left p-3 border-b">PAID</th>
                     <th className="text-left p-3 border-b">DELIVERED</th>
-                    <th className="text-left p-3 border-b"></th>
+                    <th className="text-left p-3 border-b">ACTIONS</th>
                   </tr>
                 </thead>
 
@@ -50,11 +98,13 @@ const OrderList = () => {
                     <tr key={order._id} className="border-b hover:bg-green-800">
                       <td className="p-3">
                         <img
-                          // src={order.orderItems[0].image.startsWith('/') ? order.orderItems[0].image : `/${order.orderItems[0].image}`}
-                          src={getImageUrl(order.orderItems[0].image)}//new11
-                          
+                          src={getImageUrl(order.orderItems[0]?.image)}
                           alt={order._id}
                           className="w-16 h-16 object-cover rounded"
+                          onError={(e) => {
+                            e.target.onerror = null; // Prevent infinite loop
+                            e.target.src = '/placeholder.jpg';
+                          }}
                         />
                       </td>
                       <td className="p-3 text-sm">{order._id}</td>
@@ -62,26 +112,38 @@ const OrderList = () => {
                       <td className="p-3">{order.createdAt ? order.createdAt.substring(0, 10) : "N/A"}</td>
                       <td className="p-3 font-medium">₹ {order.totalPrice}</td>
                       <td className="p-3">
-                        {order.isPaid ? (
-                          <span className="px-2 py-1 text-xs text-center bg-green-100 text-green-800 rounded-full">
-                            Completed
+                        <div className="flex flex-col gap-2">
+                          <span className={`px-2 py-1 text-xs text-center ${
+                            order.isPaid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          } rounded-full`}>
+                            {order.isPaid ? 'Completed' : 'Pending'}
                           </span>
-                        ) : (
-                          <span className="px-2 py-1 text-xs text-center bg-red-100 text-red-800 rounded-full">
-                            Pending
-                          </span>
-                        )}
+                          {!order.isPaid && (
+                            <button
+                              onClick={() => updateOrderPayment(order._id)}
+                              className="px-2 py-1 text-xs bg-pink-400 text-white rounded hover:bg-blue-600"
+                            >
+                              Mark Paid
+                            </button>
+                          )}
+                        </div>
                       </td>
                       <td className="p-3">
-                        {order.isDelivered ? (
-                          <span className="px-2 py-1 text-xs text-center bg-green-100 text-green-800 rounded-full">
-                            Completed
+                        <div className="flex flex-col gap-2">
+                          <span className={`px-2 py-1 text-xs text-center ${
+                            order.isDelivered ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          } rounded-full`}>
+                            {order.isDelivered ? 'Completed' : 'Pending'}
                           </span>
-                        ) : (
-                          <span className="px-2 py-1 text-xs text-center bg-red-100 text-red-800 rounded-full">
-                            Pending
-                          </span>
-                        )}
+                          {!order.isDelivered && order.isPaid && (
+                            <button
+                              onClick={() => updateOrderDelivery(order._id)}
+                              className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                            >
+                              Mark Delivered
+                            </button>
+                          )}
+                        </div>
                       </td>
                       <td className="p-3">
                         <Link to={`/order/${order._id}`}>
@@ -102,12 +164,13 @@ const OrderList = () => {
                 <div key={order._id} className="bg-black-100 rounded-lg shadow-sm p-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <img
-                    src={getImageUrl(order.orderItems[0].image)}
-
-                      //  src={order.orderItems[0].image.startsWith('/') ? order.orderItems[0].image : `/${order.orderItems[0].image}`}
-                      // src={order.orderItems[0].image}
+                      src={getImageUrl(order.orderItems[0]?.image)}
                       alt={order._id}
                       className="w-16 h-16 object-cover rounded"
+                      onError={(e) => {
+                        e.target.onerror = null; // Prevent infinite loop
+                        e.target.src = '/placeholder.jpg';
+                      }}
                     />
                     <div>
                       <div className="font-medium">
@@ -127,28 +190,36 @@ const OrderList = () => {
                     <div className="font-medium">₹ {order.totalPrice}</div>
                     
                     <div className="text-gray-500">Payment:</div>
-                    <div>
-                      {order.isPaid ? (
-                        <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                          Completed
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                          Pending
-                        </span>
+                    <div className="flex flex-col gap-2">
+                      <span className={`px-2 py-1 text-xs ${
+                        order.isPaid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      } rounded-full inline-block text-center`}>
+                        {order.isPaid ? 'Completed' : 'Pending'}
+                      </span>
+                      {!order.isPaid && (
+                        <button
+                          onClick={() => updateOrderPayment(order._id)}
+                          className="px-2 py-1 text-xs bg-pink-400 text-white rounded hover:bg-blue-600"
+                        >
+                          Mark Paid
+                        </button>
                       )}
                     </div>
                     
                     <div className="text-gray-500">Delivery:</div>
-                    <div>
-                      {order.isDelivered ? (
-                        <span className="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">
-                          Completed
-                        </span>
-                      ) : (
-                        <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                          Pending
-                        </span>
+                    <div className="flex flex-col gap-2">
+                      <span className={`px-2 py-1 text-xs ${
+                        order.isDelivered ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      } rounded-full inline-block text-center`}>
+                        {order.isDelivered ? 'Completed' : 'Pending'}
+                      </span>
+                      {!order.isDelivered && order.isPaid && (
+                        <button
+                          onClick={() => updateOrderDelivery(order._id)}
+                          className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                        >
+                          Mark Delivered
+                        </button>
                       )}
                     </div>
                   </div>

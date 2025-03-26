@@ -20,7 +20,7 @@ const AdminDashboard = () => {
   const [state, setState] = useState({
     options: {
       chart: {
-        type: "line",
+        type: "bar",
         toolbar: {
           show: true,
           tools: {
@@ -32,102 +32,153 @@ const AdminDashboard = () => {
             pan: true,
           },
         },
+        animations: {
+          enabled: true,
+          easing: 'easeinout',
+          speed: 800,
+          animateGradually: {
+            enabled: true,
+            delay: 150
+          },
+          dynamicAnimation: {
+            enabled: true,
+            speed: 350
+          }
+        }
+      },
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          horizontal: false,
+          columnWidth: '70%',
+          distributed: true
+        }
       },
       tooltip: {
-        theme: "light",
+        theme: "dark",
+        y: {
+          formatter: function(val) {
+            return "₹" + val.toFixed(2)
+          }
+        }
       },
-      colors: ["#00E396"],
+      colors: ['#00E396', '#008FFB', '#FEB019', '#FF4560', '#775DD0'],
       dataLabels: {
         enabled: true,
         formatter: function (val) {
-          return "₹" + val;
+          return "₹" + val.toFixed(2);
         },
         style: {
           fontSize: '12px',
-        }
-      },
-      stroke: {
-        curve: "smooth",
+          colors: ["#000"]
+        },
+        offsetY: -20
       },
       title: {
-        text: "Sales Trend",
+        text: "Daily Sales Trend",
         align: "left",
         style: {
-          fontSize: '16px',
+          fontSize: '18px',
+          fontWeight: 'bold',
+          color: '#333'
         }
       },
       grid: {
-        borderColor: "#ccc",
+        borderColor: "#e0e0e0",
         strokeDashArray: 4,
-      },
-      markers: {
-        size: 1,
+        yaxis: {
+          lines: {
+            show: true
+          }
+        }
       },
       xaxis: {
         categories: [],
         title: {
           text: "Date",
           style: {
-            fontSize: '12px',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#333'
           }
         },
         labels: {
           style: {
-            fontSize: '10px',
+            fontSize: '12px',
           },
-          rotateAlways: true,
+          rotate: -45,
+          rotateAlways: true
+        },
+        axisBorder: {
+          show: true,
+          color: '#e0e0e0'
+        },
+        crosshairs: {
+          show: true
         }
       },
       yaxis: {
         title: {
-          text: "Sales",
+          text: "Sales (₹)",
           style: {
-            fontSize: '12px',
+            fontSize: '14px',
+            fontWeight: 'bold',
+            color: '#333'
           }
         },
         min: 0,
         labels: {
           style: {
-            fontSize: '10px',
+            fontSize: '12px',
           },
           formatter: function (val) {
-            return "₹" + val;
+            return "₹" + val.toFixed(2);
           }
         }
       },
+      fill: {
+        opacity: 1
+      },
       legend: {
-        position: "top",
-        horizontalAlign: "right",
-        floating: true,
-        offsetY: -25,
-        offsetX: -5,
-        fontSize: '12px',
+        show: false
       },
       responsive: [
         {
           breakpoint: 768,
           options: {
+            plotOptions: {
+              bar: {
+                columnWidth: '85%'
+              }
+            },
             chart: {
-              height: 300,
+              height: 300
             },
             xaxis: {
               labels: {
                 rotate: -45,
-                maxHeight: 60,
+                maxHeight: 60
               }
             }
           }
         }
       ]
     },
-    series: [{ name: "Sales", data: [] }],
+    series: [{ name: "Daily Sales", data: [] }],
   });
 
   useEffect(() => {
     if (salesDetail) {
-      const formattedSalesDate = salesDetail.map((item) => ({
-        x: item._id,
-        y: item.totalSales,
+      // Sort the sales data by date
+      const sortedSales = [...salesDetail].sort((a, b) => new Date(a._id) - new Date(b._id));
+      
+      // Format dates to be more readable
+      const formattedSalesData = sortedSales.map((item) => ({
+        x: new Date(item._id).toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric'
+        }),
+        y: parseFloat(item.totalSales.toFixed(2))
       }));
 
       setState((prevState) => ({
@@ -136,11 +187,14 @@ const AdminDashboard = () => {
           ...prevState.options,
           xaxis: {
             ...prevState.options.xaxis,
-            categories: formattedSalesDate.map((item) => item.x),
+            categories: formattedSalesData.map((item) => item.x),
           },
         },
         series: [
-          { name: "Sales", data: formattedSalesDate.map((item) => item.y) },
+          { 
+            name: "Daily Sales", 
+            data: formattedSalesData.map((item) => item.y)
+          },
         ],
       }));
     }
