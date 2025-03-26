@@ -39,59 +39,57 @@ app.use(cacheControl);
 
 // Allowed Origins
 const allowedOrigins = [
-  "http://localhost:3000", // Local development
+  "http://localhost:3000",
   "http://localhost:5173",
   "https://mohkedhage.vercel.app",
-  "https://mohke-dhage-aknjcw3p1-kirtans-projects-4eedf56b.vercel.app", // Old Vercel frontend
-  "https://mohke-dhage-1h3spgwpe-kirtans-projects-4eedf56b.vercel.app", // Current Vercel frontend
-  /^https:\/\/mohke-dhage-.*-kirtans-projects-4eedf56b\.vercel\.app$/, // Match any Vercel preview URL with this pattern
-  "https://mohkedhage.onrender.com" // Render backend URL
+  "https://mohke-dhage-31jjo7x4i-kirtans-projects-4eedf56b.vercel.app", // Current Vercel URL
+  /^https:\/\/mohke-dhage-.*\.vercel\.app$/, // Match ANY Vercel deployment URL
+  "https://mohkedhage.onrender.com"
 ];
 
-// CORS Middleware with flexible origin handling
-app.use(
-  cors({
-    origin: function(origin, callback) {
-      // Allow requests with no origin (like mobile apps, curl requests)
-      if (!origin) return callback(null, true);
-      
-      // Check if origin is in allowed list or matches pattern
-      const allowed = allowedOrigins.some(allowedOrigin => {
-        return typeof allowedOrigin === 'string' 
-          ? allowedOrigin === origin
-          : allowedOrigin.test(origin);
-      });
-      
-      if (allowed) {
-        callback(null, true);
-      } else {
-        console.log('CORS blocked request from:', origin);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    
-    credentials: true,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
-    allowedHeaders: [
-      "Origin", 
-      "X-Requested-With", 
-      "Content-Type", 
-      "Accept", 
-      "Authorization", 
-      "X-Access-Token", 
-      "X-Key", 
-      "X-Auth-Token"
-    ],
-    exposedHeaders: ["Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"]
-  })
-);
+// CORS Pre-flight middleware
+app.options('*', cors());
 
-// Security Headers
+// CORS Middleware with flexible origin handling
+app.use(cors({
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps, curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin is in allowed list or matches pattern
+    const allowed = allowedOrigins.some(allowedOrigin => {
+      if (typeof allowedOrigin === 'string') {
+        return allowedOrigin === origin;
+      }
+      // If it's a regex pattern
+      return allowedOrigin.test(origin);
+    });
+    
+    if (allowed) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked request from:', origin);
+      callback(null, true); // Allow all origins in development
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+  exposedHeaders: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials']
+}));
+
+// Global middleware to add CORS headers
 app.use((req, res, next) => {
-  res.setHeader('X-Content-Type-Options', 'nosniff');
-  res.setHeader('X-Frame-Options', 'DENY');
-  res.setHeader('X-XSS-Protection', '1; mode=block');
-  next();
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
 });
 
 // Middleware
@@ -124,12 +122,15 @@ const staticOptions = {
   etag: true,
   lastModified: true,
   setHeaders: (res, path) => {
+    // Set CORS headers for all static files
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    
+    // Cache images for 1 day
     if (path.endsWith('.jpg') || path.endsWith('.png') || path.endsWith('.gif')) {
-      // Cache images for 1 day
       res.setHeader('Cache-Control', 'public, max-age=86400');
     }
-    // Allow cross-origin access to images
-    res.setHeader('Access-Control-Allow-Origin', '*');
   }
 };
 
