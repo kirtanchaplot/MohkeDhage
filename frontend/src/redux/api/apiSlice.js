@@ -17,23 +17,12 @@ import { BASE_URL } from "../constants";
 const baseQuery = fetchBaseQuery({ 
   baseUrl: BASE_URL,
   credentials: 'include',
-  prepareHeaders: (headers, { getState }) => {
-    // Try to get token from multiple sources to ensure maximum compatibility
-    const token = 
-      localStorage.getItem('userToken') || 
-      getState().auth.userInfo?.token ||
-      getState().auth.userInfo?._id;  // Fallback for older tokens
-    
-    if (token) {
-      console.log("Setting Authorization header with token");
-      headers.set('Authorization', `Bearer ${token}`);
-    } else {
-      console.log("No token available for API request");
-    }
-    
-    // Add content type for all requests
+  prepareHeaders: (headers) => {
     headers.set('Content-Type', 'application/json');
-    
+    const token = localStorage.getItem('userToken');
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`);
+    }
     return headers;
   }
 });

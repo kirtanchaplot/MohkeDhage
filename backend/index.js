@@ -10,7 +10,6 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
-import fs from "fs";
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -37,59 +36,23 @@ const cacheControl = (req, res, next) => {
 
 app.use(cacheControl);
 
-// Allowed Origins
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:5173",
-  "https://mohkedhage.vercel.app",
-  "https://mohke-dhage-31jjo7x4i-kirtans-projects-4eedf56b.vercel.app", // Current Vercel URL
-  /^https:\/\/mohke-dhage-.*\.vercel\.app$/, // Match ANY Vercel deployment URL
-  "https://mohkedhage.onrender.com"
-];
-
-// CORS Pre-flight middleware
-app.options('*', cors());
-
-// CORS Middleware with flexible origin handling
-app.use(cors({
-  origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Check if origin is in allowed list or matches pattern
-    const allowed = allowedOrigins.some(allowedOrigin => {
-      if (typeof allowedOrigin === 'string') {
-        return allowedOrigin === origin;
-      }
-      // If it's a regex pattern
-      return allowedOrigin.test(origin);
-    });
-    
-    if (allowed) {
-      callback(null, true);
-    } else {
-      console.log('CORS blocked request from:', origin);
-      callback(null, true); // Allow all origins in development
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-  exposedHeaders: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Credentials']
-}));
-
-// Global middleware to add CORS headers
+// CORS Configuration
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-  
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
+  const origin = req.headers.origin;
+  if (origin === 'http://localhost:5173' || 
+      origin === 'http://localhost:3000' || 
+      origin === 'https://mohkedhage.vercel.app' ||
+      origin === 'https://mohkedhage.onrender.com') {
+    res.setHeader('Access-Control-Allow-Origin', origin);
   }
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
 });
 
 // Middleware
@@ -122,12 +85,6 @@ const staticOptions = {
   etag: true,
   lastModified: true,
   setHeaders: (res, path) => {
-    // Set CORS headers for all static files
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    
-    // Cache images for 1 day
     if (path.endsWith('.jpg') || path.endsWith('.png') || path.endsWith('.gif')) {
       res.setHeader('Cache-Control', 'public, max-age=86400');
     }
@@ -135,18 +92,11 @@ const staticOptions = {
 };
 
 const __dirname = path.resolve();
-const uploadsDir = path.join(__dirname, 'uploads');
-
-// Ensure uploads directory exists
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
-
-app.use("/uploads", express.static(uploadsDir, staticOptions));
+app.use("/uploads", express.static(path.join(__dirname, "/uploads"), staticOptions));
 
 // Default Route
 app.get("/", (req, res) => {
-  res.send("Server is running with CORS configured...");
+  res.send("Server is running...");
 });
 
 // Error handling middleware

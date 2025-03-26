@@ -256,7 +256,7 @@ const AdminDashboard = () => {
         </div>
 
         <div className="mt-8 md:mt-10">
-          <OrderList />
+          <OrderList showAdminMenu={false} />
         </div>
       </section>
     </div>

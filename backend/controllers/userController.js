@@ -28,7 +28,9 @@ const createUser = asyncHandler(async (req, res) => {
   // Check if user exists with either email or mobile
   let userExists = null;
   if (email) {
-    userExists = await User.findOne({ email });
+    // Convert email to lowercase for case-insensitive comparison
+    const normalizedEmail = email.toLowerCase();
+    userExists = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
     if (userExists) return res.status(400).json({ message: "Email already registered" });
   }
   
@@ -41,7 +43,7 @@ const createUser = asyncHandler(async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, salt);
   const newUser = new User({ 
     username, 
-    email, 
+    email: email ? email.toLowerCase() : undefined, // Store email in lowercase
     mobile,
     password: hashedPassword 
   });
@@ -77,7 +79,9 @@ const loginUser = asyncHandler(async (req, res) => {
   // Find user by either email or mobile
   let existingUser;
   if (isEmail) {
-    existingUser = await User.findOne({ email: emailOrMobile });
+    // Convert email to lowercase and use case-insensitive search
+    const normalizedEmail = emailOrMobile.toLowerCase();
+    existingUser = await User.findOne({ email: { $regex: new RegExp(`^${normalizedEmail}$`, 'i') } });
   } else {
     // Assume it's a mobile number if it's not an email
     existingUser = await User.findOne({ mobile: emailOrMobile });

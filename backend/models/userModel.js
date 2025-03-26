@@ -11,6 +11,8 @@ const userSchema = mongoose.Schema(
       type: String,
       sparse: true,
       unique: true,
+      set: v => v ? v.toLowerCase() : v,
+      get: v => v
     },
 
     mobile: {

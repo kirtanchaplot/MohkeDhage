@@ -267,126 +267,118 @@ const Navigation = () => {
 
   // Mobile Navigation
   const MobileNav = () => (
-    <>
-      {/* Hamburger Menu Button */}
-      <button
-        onClick={toggleMobileMenu}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-[#100f0f] rounded-md text-white"
+    <div className="md:hidden">
+      {/* Mobile Menu Button */}
+      <button 
+        onClick={toggleMobileMenu} 
+        className="fixed top-4 left-4 z-50 p-2 bg-[#100f0f] rounded-md text-white"
       >
-        <AiOutlineMenu size={24} />
+        {mobileMenuOpen ? <AiOutlineClose size={24} /> : <AiOutlineMenu size={24} />}
       </button>
 
-      {/* Mobile Menu Overlay */}
-      <div
-        className={`fixed inset-0 bg-black bg-opacity-75 z-50 transition-opacity ${
-          mobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-      >
-        <div
-          className={`fixed inset-y-0 left-0 w-9/12 max-w-sm bg-black transform transition-transform duration-300 ease-in-out ${
-            mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <div className="h-full flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-gray-700">
-              <span className="text-xl font-semibold text-white">{userInfo ? userInfo.username : "Leader"}</span>
-              <button
-                onClick={toggleMobileMenu}
-                className="text-white focus:outline-none"
-              >
-                <AiOutlineClose size={24} />
-              </button>
-            </div>
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 bg-[#100f0f] z-40 flex flex-col p-5 text-white overflow-y-auto">
+          <div className="flex justify-end">
+            <button onClick={toggleMobileMenu} className="p-2">
+              <AiOutlineClose size={24} />
+            </button>
+          </div>
 
-            {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto py-2">
-              {/* Navigation Links */}
-              <div className="px-4 space-y-3">
-                <Link to="/" className="flex items-center text-white py-2" onClick={() => setMobileMenuOpen(false)}>
-                  <AiOutlineHome size={24} className="mr-3" />
-                  <span>Home</span>
-                </Link>
+          <div className="flex flex-col items-center mt-10 space-y-6">
+            {userInfo && (
+              <div className="mb-8 text-center">
+                <span className="text-xl font-semibold">{userInfo.username}</span>
+              </div>
+            )}
 
-                <Link to="/shop" className="flex items-center text-white py-2" onClick={() => setMobileMenuOpen(false)}>
-                  <AiOutlineShopping size={24} className="mr-3" />
-                  <span>Shop</span>
-                </Link>
+            <Link to="/" className="flex items-center space-x-4" onClick={() => setMobileMenuOpen(false)}>
+              <AiOutlineHome size={24} />
+              <span>Home</span>
+            </Link>
 
-                <Link to="/cart" className="flex items-center text-white py-2" onClick={() => setMobileMenuOpen(false)}>
-                  <div className="flex items-center">
-                    <AiOutlineShoppingCart size={24} className="mr-3" />
-                    <span>Cart</span>
-                    {cartItems.length > 0 && (
-                      <span className="ml-2 px-2 py-0.5 text-sm bg-pink-500 rounded-full">
-                        {cartItems.reduce((a, c) => a + c.qty, 0)}
-                      </span>
-                    )}
-                  </div>
-                </Link>
+            <Link to="/shop" className="flex items-center space-x-4" onClick={() => setMobileMenuOpen(false)}>
+              <AiOutlineShopping size={24} />
+              <span>Shop</span>
+            </Link>
 
-                <Link to="/favorite" className="flex items-center text-white py-2" onClick={() => setMobileMenuOpen(false)}>
-                  <div className="flex items-center">
-                    <FaHeart size={20} className="mr-3" />
-                    <span>Favorites</span>
-                    <FavoritesCount />
-                  </div>
-                </Link>
-
-                {/* Admin Options */}
-                {userInfo && userInfo.isAdmin && (
-                  <div className="py-3">
-                    <h3 className="text-pink-500 font-semibold mb-2">Admin Options</h3>
-                    <div className="space-y-2">
-                      <Link to="/admin/dashboard" className="block text-white py-1.5" onClick={() => setMobileMenuOpen(false)}>
-                        Dashboard
-                      </Link>
-                      <Link to="/admin/productlist" className="block text-white py-1.5" onClick={() => setMobileMenuOpen(false)}>
-                        Products
-                      </Link>
-                      <Link to="/admin/categorylist" className="block text-white py-1.5" onClick={() => setMobileMenuOpen(false)}>
-                        Categories
-                      </Link>
-                      <Link to="/admin/orderlist" className="block text-white py-1.5" onClick={() => setMobileMenuOpen(false)}>
-                        Orders
-                      </Link>
-                      <Link to="/admin/userlist" className="block text-white py-1.5" onClick={() => setMobileMenuOpen(false)}>
-                        Users
-                      </Link>
-                    </div>
-                  </div>
+            <Link to="/cart" className="flex items-center space-x-4" onClick={() => setMobileMenuOpen(false)}>
+              <div className="relative">
+                <AiOutlineShoppingCart size={24} />
+                {cartItems.length > 0 && (
+                  <span className="absolute -top-2 -right-2 px-1 py-0 text-xs text-white bg-pink-500 rounded-full">
+                    {cartItems.reduce((a, c) => a + c.qty, 0)}
+                  </span>
                 )}
               </div>
-            </div>
+              <span>Cart</span>
+            </Link>
 
-            {/* Footer - Profile & Logout */}
-            <div className="mt-auto border-t border-gray-700 p-4">
-              {userInfo ? (
-                <>
-                  <Link to="/profile" className="flex items-center text-white py-2 mb-2" onClick={() => setMobileMenuOpen(false)}>
+            <Link to="/favorite" className="flex items-center space-x-4" onClick={() => setMobileMenuOpen(false)}>
+              <div className="relative">
+                <FaHeart size={20} />
+                <FavoritesCount />
+              </div>
+              <span>Favorites</span>
+            </Link>
+
+            {userInfo ? (
+              <>
+                {userInfo.isAdmin && (
+                  <div className="flex flex-col items-center space-y-4 mt-4 border-t border-gray-700 pt-4 w-full">
+                    <span className="font-semibold text-pink-500">Admin Options</span>
+                    <Link to="/admin/dashboard" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                      Dashboard
+                    </Link>
+                    <Link to="/admin/productlist" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                      Products
+                    </Link>
+                    <Link to="/admin/categorylist" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                      Categories
+                    </Link>
+                    <Link to="/admin/orderlist" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                      Orders
+                    </Link>
+                    <Link to="/admin/userlist" className="w-full text-center py-2" onClick={() => setMobileMenuOpen(false)}>
+                      Users
+                    </Link>
+                  </div>
+                )}
+                <div className="flex flex-col items-center space-y-4 mt-4 border-t border-gray-700 pt-4 w-full">
+                  <Link 
+                    to="/profile" 
+                    className="w-full text-center py-2 hover:bg-gray-800 rounded-lg transition-colors"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     Profile
                   </Link>
-                  <button onClick={logoutHandler} className="w-full text-left text-pink-500 py-2">
+                  <button 
+                    onClick={() => {
+                      logoutHandler();
+                      setMobileMenuOpen(false);
+                    }} 
+                    className="w-full text-center py-2 text-white bg-pink-600 rounded-lg hover:bg-pink-700 transition-colors"
+                  >
                     Logout
                   </button>
-                </>
-              ) : (
-                <div className="space-y-2">
-                  <Link to="/login" className="flex items-center text-white py-2" onClick={() => setMobileMenuOpen(false)}>
-                    <AiOutlineLogin size={24} className="mr-3" />
-                    <span>Login</span>
-                  </Link>
-                  <Link to="/register" className="flex items-center text-white py-2" onClick={() => setMobileMenuOpen(false)}>
-                    <AiOutlineUserAdd size={24} className="mr-3" />
-                    <span>Register</span>
-                  </Link>
                 </div>
-              )}
-            </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center space-y-4 mt-4 border-t border-gray-700 pt-4 w-full">
+                <Link to="/login" className="w-full text-center py-2 flex items-center justify-center space-x-2 hover:bg-gray-800 rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  <AiOutlineLogin size={20} />
+                  <span>Login</span>
+                </Link>
+                <Link to="/register" className="w-full text-center py-2 flex items-center justify-center space-x-2 hover:bg-gray-800 rounded-lg transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  <AiOutlineUserAdd size={20} />
+                  <span>Register</span>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 
   return (
