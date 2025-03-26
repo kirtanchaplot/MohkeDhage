@@ -6,16 +6,22 @@ const getImageUrl = (imagePath) => {
     // If it's already an absolute URL, return as is
     if (imagePath.startsWith('http')) return imagePath;
     
-    // Otherwise, prepend the API URL
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+    // Get the API URL from environment variables
+    const apiUrl = import.meta.env.VITE_API_URL || 'https://mohkedhage.onrender.com';
+    
+    // Clean the image path
+    const cleanPath = imagePath.replace(/\\/g, '/');
     
     // Handle both /uploads/image.jpg and uploads/image.jpg formats
-    const formattedPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
+    const formattedPath = cleanPath.startsWith('/') ? cleanPath : `/${cleanPath}`;
     
-    return `${apiUrl}${formattedPath}`;
-  };
+    // Ensure we're using the correct path for uploads
+    const uploadPath = formattedPath.includes('uploads/') ? formattedPath : `/uploads${formattedPath}`;
+    
+    return `${apiUrl}${uploadPath}`;
+};
   
-  export default getImageUrl;
+export default getImageUrl;
 
 
   //new1111111all
