@@ -10,6 +10,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import fs from "fs";
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -127,11 +128,20 @@ const staticOptions = {
       // Cache images for 1 day
       res.setHeader('Cache-Control', 'public, max-age=86400');
     }
+    // Allow cross-origin access to images
+    res.setHeader('Access-Control-Allow-Origin', '*');
   }
 };
 
 const __dirname = path.resolve();
-app.use("/uploads", express.static(path.join(__dirname, "/uploads"), staticOptions));
+const uploadsDir = path.join(__dirname, 'uploads');
+
+// Ensure uploads directory exists
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+app.use("/uploads", express.static(uploadsDir, staticOptions));
 
 // Default Route
 app.get("/", (req, res) => {
