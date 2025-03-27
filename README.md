@@ -1,7 +1,7 @@
 # Mohke Dhage - Handmade & Fabric Jewelry eCommerce Website
 
 [![Website Preview](https://mohkedhage.vercel.app/)](https://mohkedhage.vercel.app/)
-#View in laptop or desktop 
+#View in laptop/desktop 
 
 ## Overview
 Mohke Dhage is a full-featured eCommerce website built using the MERN stack. It specializes in selling handmade and fabric jewelry, providing an interactive and responsive shopping experience.
@@ -21,8 +21,8 @@ Mohke Dhage is a full-featured eCommerce website built using the MERN stack. It 
 - **Authentication:** JWT-based authentication
 - **Deployment:** Vercel (Frontend), Render/Heroku (Backend)
 
-## Live Preview #View in laptop or desktop 
-Check out the live version of Mohke Dhage here: [Mohke Dhage](https://mohkedhage.vercel.app/)
+## Live Preview 
+Check out the live version of Mohke Dhage here(view in laptop/desktop): [Mohke Dhage](https://mohkedhage.vercel.app/)
 
 ## Contributing
 Contributions are welcome! Feel free to fork the repository and submit a pull request.
