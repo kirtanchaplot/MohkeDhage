@@ -21,7 +21,7 @@ Mohke Dhage is a full-featured eCommerce website built using the MERN stack. It 
 - **Authentication:** JWT-based authentication
 - **Deployment:** Vercel (Frontend), Render/Heroku (Backend)
 
-## Live Preview
+## Live Preview #View in laptop or desktop 
 Check out the live version of Mohke Dhage here: [Mohke Dhage](https://mohkedhage.vercel.app/)
 
 ## Contributing
