@@ -50,7 +50,12 @@ app.use((req, res, next) => {
     'https://mohkedhage.onrender.com',
     // New additions for broader mobile support
     /https:\/\/.*\.vercel\.app$/,  // Matches any Vercel subdomain
-    /https:\/\/mohkedhage-.*\.vercel\.app$/  // Matches specific project variations
+    /https:\/\/mohkedhage-.*\.vercel\.app$/ , // Matches specific project variations
+     // Add potential mobile app domains if you have them
+     'capacitor://localhost',
+     'ionic://localhost',
+     'http://localhost:8080',
+     'http://localhost:8081'
   ];
 
   // Check if origin is allowed
