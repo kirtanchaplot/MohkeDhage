@@ -18,7 +18,7 @@ Mohke Dhage is a full-featured eCommerce website built using the MERN stack. It 
 - **Frontend:** React.js, Redux, Tailwind CSS
 - **Backend:** Node.js, Express.js, MongoDB
 - **Authentication:** JWT-based authentication
-- **Deployment:** Vercel (Frontend), Render/Heroku (Backend)
+- **Deployment:** Vercel (Frontend), Render (Backend)
 
 ## Live Preview 
 Check out the live version of Mohke Dhage here(view in laptop/desktop): [Mohke Dhage](https://mohkedhage.vercel.app/)
