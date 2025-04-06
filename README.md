@@ -22,10 +22,10 @@ Mohke Dhage is a full-featured eCommerce website built using the MERN stack. It 
 Here’s a preview of the website interface:  
 
 <p align="center">
-  <img src="uploads/pr1.png" alt="Homepage" width="300">
-  <img src="uploads/pr2.png" alt="Product Page" width="300">
-  <img src="uploads/pr3.png" alt="Order page" width="300">
-  <img src="uploads/pr4.png" alt="Dashboard" width="300">
+  <img src="uploads/pr1.png" alt="Homepage" width="400">
+  <img src="uploads/pr2.png" alt="Product Page" width="400">
+  <img src="uploads/pr3.png" alt="Order page" width="400">
+  <img src="uploads/pr4.png" alt="Dashboard" width="400">
 </p>
 
 ## Live Preview  
